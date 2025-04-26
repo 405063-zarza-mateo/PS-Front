@@ -1,0 +1,19 @@
+<div class="modal-backdrop fade show" *ngIf="isOpen"></div>
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="isOpen">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirmar Eliminación</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="onCancel()"></button>
+      </div>
+      <div class="modal-body">
+        <p>¿Está seguro que desea eliminar al alumno <strong>{{ studentName }}</strong>?</p>
+        <p class="text-danger mb-0"><small>Esta acción no se puede deshacer.</small></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="onConfirm()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

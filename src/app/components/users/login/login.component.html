@@ -1,0 +1,92 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-lg">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <h2 class="text-dark-blue fw-bold">Iniciar Sesión</h2>
+            </div>
+            
+            @if (loginError) {
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ loginError }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            }
+            
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light">
+                    <i class="bi bi-envelope"></i>
+                  </span>
+                  <input 
+                    type="email" 
+                    formControlName="email" 
+                    class="form-control" 
+                    id="email" 
+                    placeholder="correo@ejemplo.com"
+                    [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                  >
+                  <div class="invalid-feedback">
+                    @if (loginForm.get('email')?.hasError('required')) {
+                      El correo electrónico es obligatorio
+                    } @else if (loginForm.get('email')?.hasError('email')) {
+                      Ingrese un correo electrónico válido
+                    }
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label for="password" class="form-label">Contraseña</label>
+                  <a routerLink="/reset-password" class="text-decoration-none small">¿Olvidaste tu contraseña?</a>
+                </div>
+                <div class="input-group">
+                  <span class="input-group-text bg-light">
+                    <i class="bi bi-lock"></i>
+                  </span>
+                  <input 
+                    type="password" 
+                    formControlName="password" 
+                    class="form-control" 
+                    id="password" 
+                    placeholder="Ingresa tu contraseña"
+                    [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                  >
+                  <div class="invalid-feedback">
+                    @if (loginForm.get('password')?.hasError('required')) {
+                      La contraseña es obligatoria
+                    } @else if (loginForm.get('password')?.hasError('minlength')) {
+                      La contraseña debe tener al menos 6 caracteres
+                    }
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="rememberMe">
+                  <label class="form-check-label" for="rememberMe">Recordarme</label>
+                </div>
+              </div>
+              
+              <button 
+                type="submit" 
+                class="btn btn-primary w-100 py-2" 
+                [disabled]="loginForm.invalid"
+              >
+                Iniciar Sesión
+              </button>
+            </form>
+            
+            <div class="text-center mt-4">
+              <p class="mb-0">¿No tienes una cuenta? <a routerLink="/register" class="text-decoration-none  ">Regístrate</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

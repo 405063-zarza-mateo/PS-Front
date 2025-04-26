@@ -1,0 +1,148 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-lg">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <h2 class="text-dark-blue fw-bold">Crear Cuenta</h2>
+            <p class="text-muted">Al registrarse deberá esperar la confirmación de su cuenta</p>
+          </div>
+
+          @if (registrationError) {
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ registrationError }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          }
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">Nombre</label>
+                <input type="text" formControlName="name" class="form-control" id="namr" placeholder="Tu nombre"
+                  [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
+                <div class="invalid-feedback">
+                  @if (registerForm.get('firstName')?.hasError('required')) {
+                  El nombre es obligatorio
+                  } @else if (registerForm.get('firstName')?.hasError('minlength')) {
+                  El nombre debe tener al menos 2 caracteres
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Apellido</label>
+                <input type="text" formControlName="lastName" class="form-control" id="lastName"
+                  placeholder="Tu apellido"
+                  [class.is-invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
+                <div class="invalid-feedback">
+                  @if (registerForm.get('lastName')?.hasError('required')) {
+                  El apellido es obligatorio
+                  } @else if (registerForm.get('lastName')?.hasError('minlength')) {
+                  El apellido debe tener al menos 2 caracteres
+                  }
+                </div>
+              </div>
+            </div>
+            
+            <label for="email" class="form-label">Correo electrónico</label>
+            <div class="row">
+              <div class=" col-md-6 mb-3">
+                <input type="email" formControlName="email" class="form-control" id="email"
+                  placeholder="correo@ejemplo.com"
+                  [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+                <div class="invalid-feedback">
+                  @if (registerForm.get('email')?.hasError('required')) {
+                  El email es obligatorio
+                  } @else if (registerForm.get('email')?.hasError('email')) {
+                  Por favor ingrese un email válido
+                  }
+                </div>
+              </div>
+
+              <div class=" col-md-6 mb-3">
+
+                <select class="form-select py-1" formControlName="course" id="course" style="height: 4vh;">
+                  <option selected>Curso</option>
+                  <option value="Cuarto_anio">Cuarto año </option>
+                  <option value="Quinto_anio">Quinto año </option>
+                  <option value="Sexto_anio">Sexto año </option>
+                  <option value="Universidad">Universidad </option>
+
+
+                </select>
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" formControlName="password" class="form-control" id="password"
+                  placeholder="Crea una contraseña"
+                  [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+                <div class="invalid-feedback">
+                  @if (registerForm.get('password')?.hasError('required')) {
+                  La contraseña es obligatoria
+                  } @else if (registerForm.get('password')?.hasError('minlength')) {
+                  La contraseña debe tener al menos 8 caracteres
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                <input type="password" formControlName="confirmPassword" class="form-control" id="confirmPassword"
+                  placeholder="Confirma tu contraseña"
+                  [class.is-invalid]="(registerForm.get('confirmPassword')?.invalid || registerForm.hasError('mismatch')) && registerForm.get('confirmPassword')?.touched">
+                <div class="invalid-feedback">
+                  @if (registerForm.get('confirmPassword')?.hasError('required')) {
+                  Debe confirmar la contraseña
+                  } @else if (registerForm.hasError('mismatch')) {
+                  Las contraseñas no coinciden
+                  }
+                </div>
+              </div>
+            </div>
+
+
+            <!-- POR SI LO PIDEN -->
+
+
+
+            <!--           <div class="mb-4">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    formControlName="termsAccepted"
+                    id="termsAccepted"
+                    [class.is-invalid]="registerForm.get('termsAccepted')?.invalid && registerForm.get('termsAccepted')?.touched"
+                  >
+                  <label class="form-check-label" for="termsAccepted">
+                    Acepto los <a href="#" class="text-decoration-none">términos y condiciones</a>
+                  </label>
+                  <div class="invalid-feedback">
+                    Debe aceptar los términos y condiciones
+                  </div>
+                </div>
+              </div> -->
+
+            <button type="submit" class="btn btn-primary w-100 py-2" [disabled]="registerForm.invalid || isSubmitting">
+              @if (isSubmitting) {
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Procesando...
+              } @else {
+              Registrarme
+              }
+            </button>
+          </form>
+
+          <div class="text-center mt-4">
+            <p class="mb-0">¿Ya tienes una cuenta? <a routerLink="/login" class="text-decoration-none ">Iniciar
+                Sesión</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,178 @@
+<div class="container py-4">
+  <h1 class="h3 mb-2 text-primary">Listado de Alumnos</h1>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Filtrar por curso -->
+    <div class="d-flex gap-2">
+      <div class="input-group">
+        <span class="input-group-text bg-light py-1">
+          <i class="bi bi-filter"></i>
+        </span>
+        <select class="form-select py-1" style="height: 4vh;" aria-label="Filtrar por curso..."
+          (change)="onCourseChange($event)" [value]="selectedCourse">
+          <option selected>Curso...</option>
+          @for (course of courses; track $index) {
+          @if (course.includes("_") && course.includes("grado")) {
+          <option value="{{course}}">{{course.slice(0, course.indexOf("_"))}}
+            grado </option>
+          }
+          @else if (course.includes("_") && course.includes("anio")) {
+          <option value="{{course}}">{{course.slice(0, course.indexOf("_"))}}
+            año </option>
+          }
+          @else {
+          <option value="{{course}}">{{course}}</option>
+          }
+          }
+        </select>
+      </div>
+      <!-- Opcional: Botón para limpiar filtros -->
+      <button *ngIf="selectedCourse !== 'Curso...'" class="btn btn-outline-secondary py-1" style="height: 4vh;" (click)="resetCourseFilter()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Buscar y Agregar -->
+    <div class="d-flex gap-2">
+      <div class="input-group">
+        <span class="input-group-text bg-light py-1">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control py-1" style="height: 4vh;" placeholder="Buscar..."
+          (input)="onSearch($event)" [value]="searchTerm">
+      </div>
+      <button class="btn btn-primary py-1" style="height: 4vh; width: 12vw;" (click)="openCreateModal()">
+        <i class="bi bi-plus-lg me-1"></i>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Mensaje de error -->
+  <div class="alert alert-danger mb-4" *ngIf="error">
+    {{ error }}
+    <button type="button" class="btn-close float-end" (click)="error = ''"></button>
+  </div>
+
+  @if (successMessage) {
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+  </div>
+  }
+
+  <!-- Indicador de carga -->
+  @if (isLoading) {
+  <div class="spinner-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2 text-muted">Cargando...</p>
+  </div>
+  }
+
+  <div class="card border-0 shadow-sm" *ngIf="!isLoading">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th scope="col">Nombre Completo</th>
+              <th scope="col">Sexo</th>
+              <th scope="col">Curso</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (student of filteredStudents; track student.id) {
+            <tr>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div>{{ student.name }} {{ student.lastName }}</div>
+                </div>
+              </td>
+              <td>
+                @if (student.gender === "Masculino" ) {
+                <div
+                  class="avatar avatar-sm me-2 bg-primary rounded-circle d-flex align-items-center justify-content-center">
+                  <span class="text-white">{{ student.gender.charAt(0) }}</span>
+                </div>
+                } @else {
+                <div
+                  class="avatar avatar-sm me-2 bg-female rounded-circle d-flex align-items-center justify-content-center">
+                  <span class="text-white">{{ student.gender.charAt(0) }}</span>
+                </div>
+                }
+              </td>
+              <td>
+                @if (student.course.includes("_") && student.course.includes("grado")) {
+                {{ student.course.slice(0, student.course.indexOf("_")) }} grado
+                }
+                @else if (student.course.includes("_") && student.course.includes("anio")) {
+                {{ student.course.slice(0, student.course.indexOf("_")) }} año
+                }
+                @else {
+                {{ student.course }}
+                }
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="openAddReviewModal(student.id)">
+                  <i class="bi bi-journal-plus"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" (click)="openDetailsModal(student.id)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  @if (isAdmin) {
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(student.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                  }
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="7" class="text-center py-4">
+                <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
+                <p class="mb-0">No hay alumnos registrados</p>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer bg-white py-3">
+      <nav>
+        <ul class="pagination justify-content-end mb-0">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1"><i class="bi bi-chevron-left"></i></a>
+          </li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Modal de creaer alumno -->
+  <app-create-student [isOpen]="isCreateModalOpen" (close)="closeCreateModal()" (created)="createdStudet()">
+  </app-create-student>
+  <!-- Modal de detalles del alumno -->
+  <app-view-student [isOpen]="isDetailsModalOpen" [student]="selectedStudent" (close)="closeDetailsModal()"
+    (edit)="openDetailsModal($event)" (updated)="onStudentUpdated($event)">
+  </app-view-student>
+  <!-- Modal de confirmación de eliminación -->
+  <app-delete-student [isOpen]="isDeleteModalOpen"
+    [studentName]="selectedStudent?.name + ' ' + selectedStudent?.lastName" [studentId]="studentToDeleteId"
+    (confirm)="confirmDelete($event)" (cancel)="closeDeleteModal()">
+  </app-delete-student>
+  <!-- Modal de reviews-->
+  <app-new-review [isOpen]="isReviewModalOpen" [selectedStudent]="selectedStudent" (close)="onCloseAddReviewModal()"
+    (created)="onReviewCreated()">
+  </app-new-review>
+</div>
