@@ -7,11 +7,13 @@ import { Router } from '@angular/router';
 import { StudentService } from '../../../services/student-service.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ViewTeacherComponent } from "../view-teacher/view-teacher.component";
+import { AdminViewService } from '../../../services/admin-view-service.service';
 
 @Component({
   selector: 'app-teachers-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ViewTeacherComponent],
   templateUrl: './teachers-list.component.html',
   styleUrl: './teachers-list.component.scss'
 })
@@ -37,8 +39,8 @@ export class TeachersListComponent implements OnInit, OnDestroy {
   
   constructor(
     private teacherService: TeacherService,
+    private adminViewService : AdminViewService,
     private studentService: StudentService,
-    private authService: AuthService,
     private router: Router
   ) {}
   
@@ -54,15 +56,15 @@ export class TeachersListComponent implements OnInit, OnDestroy {
     loadTeachers(): void {
       this.isLoading = true;
   
-      const subscription = this.teacherService.getTeachers().subscribe({
+      const subscription = this.adminViewService.getTeachers().subscribe({
         next: (data) => {
           this.teachers = data;
           this.applyFilters(); 
           this.isLoading = false;
         },
         error: (err) => {
-          console.error('Error al cargar los alumnos:', err);
-          this.error = 'No se pudieron cargar los alumnos. Por favor, intente nuevamente.';
+          console.error('Error al cargar los profesores:', err);
+          this.error = 'No se pudieron cargar los profesores. Por favor, intente nuevamente.';
           this.isLoading = false;
         }
       });

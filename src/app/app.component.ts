@@ -10,5 +10,7 @@ import { NavbarComponent } from "./components/general/navbar/navbar.component";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'front';
+  title = 'El Galponcito';
+
+  
 }

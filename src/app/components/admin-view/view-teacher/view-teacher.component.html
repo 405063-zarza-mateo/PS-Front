@@ -1,0 +1,172 @@
+<div class="modal-backdrop fade show" *ngIf="isOpen"></div>
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="isOpen">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-dark-blue text-white">
+                <h5 class="modal-title">Detalles del Profesor</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="onClose()"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row" *ngIf="teacher">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="text-center mb-3">
+                            <div
+                                class="bg-dark-blue mx-auto avatar avatar-lg rounded-circle d-flex align-items-center justify-content-center">
+                                <span class="text-white fs-4">{{ teacher.name.charAt(0) }}{{ teacher.lastName.charAt(0)
+                                    }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="mb-1 text-dark-blue fw-bold">{{ teacher.name }} {{ teacher.lastName }}</h2>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12">
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Curso</small>
+                                        <p class="mb-0 fw-medium">{{ teacher.course }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Asistencia</small>
+                                        <p class="mb-0 fw-medium">{{ teacher.assistance }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <small class="text-muted">Email</small>
+                                <p class="mb-0 fw-medium">{{ teacher.user.email }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Revisiones realizadas por el profesor -->
+                    <div class="col-12 mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="text-muted mb-0">Evaluaciones Realizadas</h6>
+                        </div>
+
+                        @if (loading) {
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Cargando evaluaciones...</p>
+                        </div>
+                        } @else if (errorMessage) {
+                        <div class="alert alert-danger">
+                            {{ errorMessage }}
+                        </div>
+                        } @else if (teacherReviews.length > 0) {
+                        <div class="accordion" id="reviewAccordion">
+                            @for (review of teacherReviews; track review.reviewId; let i = $index) {
+                            <div class="accordion-item border mb-2 shadow-sm">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button"
+                                        [attr.data-bs-target]="'#collapse' + i" [attr.aria-controls]="'collapse' + i"
+                                        data-bs-toggle="collapse">
+                                        <div class="d-flex w-100 justify-content-between align-items-center">
+                                            <span>
+                                                <i class="bi bi-calendar3 me-2 text-primary"></i>
+                                                {{ review.date | date:'dd/MM/yyyy' }}
+                                            </span>
+                                            <span class="badge bg-info rounded-pill ms-2">
+                                                {{review.studentName}} {{review.studentLastName}}
+                                            </span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div [id]="'collapse' + i" class="accordion-collapse collapse"
+                                    [attr.aria-labelledby]="'heading' + i" data-bs-parent="#reviewAccordion">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-hover">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Asignatura</th>
+                                                        <th class="text-center">Puntuación</th>
+                                                        <th class="text-center">Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (result of review.results; track result.subject) {
+                                                    <tr>
+                                                        <td>
+                                                            <span [ngClass]="{
+                                                                'text-primary fw-medium': result.subject === 'Matematica',
+                                                                'text-success fw-medium': result.subject === 'Lectura',
+                                                                'text-info fw-medium': result.subject === 'Escritura',
+                                                                'text- fw-medium': result.subject === 'Disciplina'
+                                                            }">
+                                                                {{ formatSubjectName(result.subject) }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (result.workedOn) {
+                                                            <div class="progress" style="height: 10px;"
+                                                                title="Puntuación: {{ result.score }}">
+                                                                <div class="progress-bar" role="progressbar" [ngClass]="{
+                                                                        'bg-danger': result.score < 40,
+                                                                        'bg-warning': result.score >= 40 && result.score < 70,
+                                                                        'bg-success': result.score >= 70
+                                                                    }" [style.width.%]="(result.score / 100) * 100">
+                                                                </div>
+                                                            </div>
+                                                            <small class="d-block mt-1" [ngClass]="{
+                                                                'text-danger': result.score < 40,
+                                                                'text-warning': result.score >= 40 && result.score < 70,
+                                                                'text-success': result.score >= 70
+                                                            }">{{ result.score }}/100</small>
+                                                            } @else {
+                                                            <span class="text-muted">N/A</span>
+                                                            }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (result.workedOn) {
+                                                            <span class="badge bg-success rounded-pill">Trabajado</span>
+                                                            } @else {
+                                                            <span class="badge bg-danger rounded-pill">No
+                                                                trabajado</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    } @empty {
+                                                    <tr>
+                                                        <td colspan="3" class="text-center py-3">
+                                                            <i class="bi bi-info-circle me-2"></i> No hay resultados
+                                                            disponibles
+                                                        </td>
+                                                    </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                        } @else {
+                        <div class="card border shadow-sm mb-3">
+                            <div class="card-body text-center py-4">
+                                <i class="bi bi-journal-text text-muted fs-1 mb-3"></i>
+                                <h6 class="text-muted">No hay evaluaciones registradas</h6>
+                                <p class="text-muted small">Este profesor aún no ha realizado evaluaciones.</p>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" (click)="onClose()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

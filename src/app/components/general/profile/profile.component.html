@@ -1,1 +1,233 @@
-<p>profile works!</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-lg">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <h2 class="text-dark-blue fw-bold">Perfil de Profesor</h2>
+            </div>
+            
+            @if (successMessage) {
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ successMessage }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            }
+            
+            @if (errorMessage) {
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ errorMessage }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            }
+  
+            <!-- Vista de información del perfil -->
+            @if (!isEditing) {
+              <div class="mb-4">
+                <div class="d-flex justify-content-between">
+                  <h3 class="h5 mb-3">Información Personal</h3>
+                  <button (click)="toggleEdit()" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil"></i> Editar
+                  </button>
+                </div>
+                <div class="card bg-light">
+                  <div class="card-body">
+                    <div class="mb-2">
+                      <label class="fw-bold">Correo electrónico:</label>
+                      <p class="mb-1">{{ userProfile?.email }}</p>
+                    </div>
+                    <div class="mb-2">
+                      <label class="fw-bold">Nombre:</label>
+                      <p class="mb-1">{{ userProfile?.name }} {{ userProfile?.lastName }}</p>
+                    </div>
+                    <div class="mb-2">
+                      <label class="fw-bold">Curso:</label>
+                      <p class="mb-1">{{ userProfile?.course }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Sección para cambiar contraseña -->
+              <div class="mt-4">
+                <h3 class="h5 mb-3">Cambiar Contraseña</h3>
+                <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+                  <div class="mb-3">
+                    <label for="currentPassword" class="form-label">Contraseña actual</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light">
+                        <i class="bi bi-lock"></i>
+                      </span>
+                      <input 
+                        type="password" 
+                        formControlName="currentPassword" 
+                        class="form-control" 
+                        id="currentPassword" 
+                        placeholder="Ingresa tu contraseña actual"
+                        [class.is-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched"
+                      >
+                      <div class="invalid-feedback">
+                        La contraseña actual es obligatoria
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label for="newPassword" class="form-label">Nueva contraseña</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light">
+                        <i class="bi bi-lock"></i>
+                      </span>
+                      <input 
+                        type="password" 
+                        formControlName="newPassword" 
+                        class="form-control" 
+                        id="newPassword" 
+                        placeholder="Ingresa tu nueva contraseña"
+                        [class.is-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
+                      >
+                      <div class="invalid-feedback">
+                        @if (passwordForm.get('newPassword')?.hasError('required')) {
+                          La nueva contraseña es obligatoria
+                        } @else if (passwordForm.get('newPassword')?.hasError('minlength')) {
+                          La contraseña debe tener al menos 6 caracteres
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="mb-4">
+                    <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-light">
+                        <i class="bi bi-lock-fill"></i>
+                      </span>
+                      <input 
+                        type="password" 
+                        formControlName="confirmPassword" 
+                        class="form-control" 
+                        id="confirmPassword" 
+                        placeholder="Confirma tu nueva contraseña"
+                        [class.is-invalid]="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched"
+                      >
+                      <div class="invalid-feedback">
+                        @if (passwordForm.get('confirmPassword')?.hasError('required')) {
+                          La confirmación de contraseña es obligatoria
+                        } @else if (passwordForm.get('confirmPassword')?.hasError('mustMatch')) {
+                          Las contraseñas no coinciden
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    type="submit" 
+                    class="btn btn-primary w-100 py-2" 
+                    [disabled]="passwordForm.invalid"
+                  >
+                    Cambiar Contraseña
+                  </button>
+                </form>
+              </div>
+            }
+  
+            <!-- Formulario para editar el perfil -->
+            @if (isEditing) {
+              <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+                <div class="mb-3">
+                  <label for="email" class="form-label">Correo electrónico</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-envelope"></i>
+                    </span>
+                    <input 
+                      type="email" 
+                      formControlName="email" 
+                      class="form-control" 
+                      id="email" 
+                      [readonly]="true"
+                    >
+                  </div>
+                  <small class="text-muted">El correo electrónico no puede ser modificado</small>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="name" class="form-label">Nombre</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-person"></i>
+                    </span>
+                    <input 
+                      type="text" 
+                      formControlName="name" 
+                      class="form-control" 
+                      id="name" 
+                      [readonly]="true"
+                    >
+                  </div>
+                  <small class="text-muted">El nombre no puede ser modificado</small>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="lastame" class="form-label">Apellido</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-person"></i>
+                    </span>
+                    <input 
+                      type="text" 
+                      formControlName="lastName" 
+                      class="form-control" 
+                      id="lastName" 
+                      [readonly]="true"
+                    >
+                  </div>
+                  <small class="text-muted">El apellido no puede ser modificado</small>
+                </div>
+                
+                <div class="mb-4">
+                  <label for="course" class="form-label">Curso</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-book"></i>
+                    </span>
+
+                    <select class="form-select py-1" formControlName="course" id="course" style="height: 4vh;">
+                        <option selected>Curso</option>
+                        <option value="Cuarto_anio">Cuarto año </option>
+                        <option value="Quinto_anio">Quinto año </option>
+                        <option value="Sexto_anio">Sexto año </option>
+                        <option value="Universidad">Universidad </option>
+      
+      
+                      </select>
+                          
+                    <div class="invalid-feedback">
+                      El curso es obligatorio
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="d-flex gap-2">
+                  <button 
+                    type="submit" 
+                    class="btn btn-primary flex-grow-1 py-2" 
+                    [disabled]="profileForm.invalid"
+                  >
+                    Guardar Cambios
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-secondary flex-grow-1 py-2" 
+                    (click)="cancelEdit()"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

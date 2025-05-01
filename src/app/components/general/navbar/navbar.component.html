@@ -5,62 +5,77 @@
       <img src="./logo.png" alt="El Galponcito Logo" height="40" class="me-2">
       <span class="text-dark-blue fw-bold">El Galponcito</span>
     </a>
-    
+
     <!-- Eslogan centrado absolutamente -->
     <div class="position-absolute top-50 start-50 translate-middle d-none d-md-block">
       <p class="m-0 fst-italic text-muted 5em">"Llamados a ser familia"</p>
     </div>
-    
+
     <!-- Botón de hamburguesa -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
+
     <!-- Menú a la derecha -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item me-3">
-          <a class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+          <a class="nav-link" routerLink="/home" routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}">Inicio</a>
         </li>
+
+        <!-- Corrección: Separación clara de las condicionales -->
         @if (isLoggedIn) {
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/students" routerLinkActive="active">Alumnos</a>
-          </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/students" routerLinkActive="active">Alumnos</a>
+        </li>
 
-          @if(isAdmin){
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                Vista admin
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" routerLink="/teachers">Profesores</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" routerLink="/allow-list">Registros pendientes</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" routerLink="/inventory">Inventario</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" routerLink="/teacher-log">Historial de acciones</a></li>
-              </ul>
+        @if(isAdmin) {
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Vista admin
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="/teachers">Profesores</a></li>
+            <li>
+              <hr class="dropdown-divider">
             </li>
-  
-          }
+            @if (toAccept != 0) {
+            <li><a class="dropdown-item" routerLink="/allow-list">Solicitudes ({{toAccept}})</a> <i
+                class="rounded-circle bg-warning"></i></li>
+            } @else {
+            <li><a class="dropdown-item" routerLink="/allow-list">Solicitudes</a></li>
+            }
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" routerLink="/inventory">Inventario</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" routerLink="/teacher-log">Historial de acciones</a></li>
+          </ul>
+        </li>
+        }
 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              <i class="bi bi-person-circle me-1"></i>   Perfil
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" routerLink="/profile">Ver Perfil</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#" (click)="logout()">Cerrar Sesión</a></li>
-            </ul>
-          </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i> Perfil
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="/profile">Ver Perfil</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="#" (click)="logout()">Cerrar Sesión</a></li>
+          </ul>
+        </li>
         } @else {
-          <li class="nav-item">
-            <a class="btn btn-outline-dark-blue" routerLink="/login">
-              <i class="bi bi-box-arrow-in-right me-1"></i> Ingresar
-            </a>
-          </li>
+        <li class="nav-item">
+          <a class="btn btn-outline-dark-blue" routerLink="/login">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Ingresar
+          </a>
+        </li>
         }
       </ul>
     </div>

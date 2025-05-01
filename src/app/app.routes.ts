@@ -36,6 +36,11 @@ export const routes: Routes = [
             .then(m => m.ViewStudentComponent), canActivate: [authGuard]
     },
     {
+        path: 'profile',
+        loadComponent: () => import('./components/general/profile/profile.component')
+            .then(m => m.ProfileComponent), canActivate: [authGuard]
+    },
+    {
         path: 'teachers',
         loadComponent: () => import('./components/admin-view/teachers-list/teachers-list.component')
             .then(m => m.TeachersListComponent), canActivate: [ adminGuard]
@@ -52,7 +57,7 @@ export const routes: Routes = [
     },
     {
         path: 'inventory',
-        loadComponent: () => import('./components/inventory/inventory-list/inventory-list.component')
+        loadComponent: () => import('./components/admin-view/inventory/inventory-list/inventory-list.component')
             .then(m => m.InventoryListComponent), canActivate: [authGuard, adminGuard]
     },
     {

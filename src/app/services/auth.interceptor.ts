@@ -5,8 +5,8 @@ import { AuthService } from './auth-service.service';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
+// En auth.interceptor.ts
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn) => {
-  console.log('Interceptor funcional ejecutándose');
 
   const authService = inject(AuthService);
 
@@ -16,12 +16,17 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: 
     return next(req);
   }
 
+  // Verificar si estamos en un entorno con localStorage disponible
+  const isPlatformBrowser = typeof window !== 'undefined' && window.localStorage;
+
   let parsedUser: any = null;
-  try {
-    const currentUser = localStorage.getItem('currentUser');
-    parsedUser = currentUser ? JSON.parse(currentUser) : null;
-  } catch (e) {
-    console.error('Error al parsear currentUser', e);
+  if (isPlatformBrowser) {
+    try {
+      const currentUser = localStorage.getItem('currentUser');
+      parsedUser = currentUser ? JSON.parse(currentUser) : null;
+    } catch (e) {
+      console.error('Error al parsear currentUser', e);
+    }
   }
 
   if (parsedUser?.token && parsedUser?.tokenType) {
