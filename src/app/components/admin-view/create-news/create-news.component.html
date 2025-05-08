@@ -1,0 +1,61 @@
+<div class="modal-backdrop fade show" *ngIf="isOpen"></div>
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="isOpen">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-dark-blue text-white">
+                <h5 class="modal-title">Crear Noticia</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="close.emit()"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form [formGroup]="newsForm" (ngSubmit)="onSubmit()">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título</label>
+                        <input type="text" id="title" formControlName="title" class="form-control"
+                            placeholder="Ingrese el título" />
+                            <!-- Mensajes de validación para el título -->
+                            <div class="form-text text-danger"
+                            *ngIf="newsForm.get('title')?.touched && newsForm.get('title')?.errors?.['required']">
+                            El título es obligatorio.
+                        </div>
+                    </div>
+                        
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea id="description" formControlName="body" class="form-control"
+                            placeholder="Ingrese la descripción"></textarea>
+                            
+                            <!-- Mensajes de validación para el contenido -->
+                            <div class="form-text text-danger"
+                            *ngIf="newsForm.get('body')?.touched && newsForm.get('body')?.errors?.['required']">
+                            El contenido es obligatorio.
+                        </div>
+                    </div>
+                        
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Imagen</label>
+                        <input type="file" id="image" (change)="onFileSelected($event)"
+                            placeholder="Adjuntar imágen de portada" class="form-control" />
+                    </div>
+
+                    <div class="mb-3" *ngIf="imagePreview">
+                        <label class="form-label">Vista previa</label>
+                        <div class="position-relative">
+                            <img [src]="imagePreview" alt="Vista previa" class="img-thumbnail w-100" />
+                            <button type="button" class="btn btn-danger position-absolute top-0 end-0 m-2"
+                                (click)="removeImage()">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="newsForm.invalid">
+                            Crear Noticia
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -34,7 +34,6 @@ export class ViewTeacherComponent {
   }
 
   ngOnChanges(): void {
-    // Cuando el profesor cambia, cargamos sus revisiones
     if (this.teacher && this.isOpen) {
       this.loadTeacherReviews();
     }

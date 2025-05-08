@@ -1,12 +1,8 @@
 export interface News {
-    id: number;
-    title: string;
-    content: string;
-    summary: string;
-    imageUrl: string;
-    category: string;
-    date: Date;
-    author: string;
-    published: boolean;
-  }
-  
+  id: number;
+  title: string;
+  body: string;
+  imageUrl: string;
+  time: string;
+  category?: string; // Agregado para mantener compatibilidad con la landing  }
+}
