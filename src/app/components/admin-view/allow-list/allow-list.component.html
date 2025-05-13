@@ -18,14 +18,12 @@
   
           </select>
         </div>
-        <!-- Opcional: Botón para limpiar filtros -->
         <button *ngIf="selectedCourse !== 'Curso...'" class="btn btn-outline-secondary py-1" style="height: 4vh;"
           (click)="resetCourseFilter()">
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
   
-      <!-- Buscar y Agregar -->
       <div class="d-flex gap-2">
         <div class="input-group">
           <span class="input-group-text bg-light py-1">

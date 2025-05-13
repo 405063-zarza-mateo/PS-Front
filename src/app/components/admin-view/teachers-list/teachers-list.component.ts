@@ -9,11 +9,12 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ViewTeacherComponent } from "../view-teacher/view-teacher.component";
 import { AdminViewService } from '../../../services/admin-view-service.service';
+import { DeleteTeacherComponent } from "../delete-teacher/delete-teacher.component";
 
 @Component({
   selector: 'app-teachers-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ViewTeacherComponent],
+  imports: [CommonModule, ReactiveFormsModule, ViewTeacherComponent, DeleteTeacherComponent],
   templateUrl: './teachers-list.component.html',
   styleUrl: './teachers-list.component.scss'
 })

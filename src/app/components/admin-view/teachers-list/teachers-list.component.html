@@ -134,4 +134,10 @@
   [teacher]="selectedTeacher" 
   (close)="closeDetailsModal()">
 </app-view-teacher>
+
+  <app-delete-teacher [isOpen]="isDeleteModalOpen"
+    [teacherName]="selectedTeacher?.name + ' ' + selectedTeacher?.lastName" [teacherId]="teacherToDeleteId"
+    (confirm)="confirmDelete($event)" (cancel)="closeDeleteModal()">
+  </app-delete-teacher>
+
 </div>

@@ -1,0 +1,36 @@
+
+.modal-backdrop {
+  opacity: 0.5;
+}
+
+
+.modal-content {
+  transition: all 0.3s ease;
+  border-radius: 0.5rem;
+}
+
+.btn {
+  transition: all 0.3s;
+}
+
+.rounded-pill {
+  border-radius: 50rem;
+}
+
+.card {
+  transition: all 0.3s;
+  border-radius: 0.5rem;
+}
+
+
+
+// Animación suave para el cambio entre modos
+.modal-content {
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0.8; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

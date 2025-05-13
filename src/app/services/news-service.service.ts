@@ -24,11 +24,21 @@ export class NewsService {
     return this.http.post<News>(this.apiUrl, formData);
   }
 
+  // Method to update news with image (uses the correct endpoint)
+  updateNewsWithImage(id: number, formData: FormData): Observable<News> {
+    return this.http.put<News>(`${this.apiUrl}/${id}/with-image`, formData);
+  }
+
+  // Method to update news without image (JSON format)
+  updateNewsWithoutImage(id: number, news: { title: string, body: string }): Observable<News> {
+    return this.http.put<News>(`${this.apiUrl}/${id}`, news);
+  }
+
   deleteNews(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Helper para preparar el FormData que necesita el backend
+  // Helper to prepare the FormData that the backend needs
   prepareFormData(news: { title: string, body: string, image?: File }): FormData {
     const formData = new FormData();
     formData.append('title', news.title);

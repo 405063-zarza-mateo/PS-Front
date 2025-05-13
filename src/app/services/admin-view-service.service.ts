@@ -8,6 +8,7 @@ import { ReviewDto } from '../models/ReviewDto';
 import { Student } from '../models/student';
 import { StudentPostDto } from '../models/studentPostDto';
 import { Teacher } from '../models/teacher';
+import { Log } from '../models/log';
 
 @Injectable({
   providedIn: 'root'
@@ -90,4 +91,9 @@ export class AdminViewService {
         })
       );
   }
+
+  
+    getLogs(): Observable<Log[]> {
+      return this.http.get<Log[]>(`${this.apiUrl}/logs`);
+    }
   }

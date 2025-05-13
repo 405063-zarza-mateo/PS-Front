@@ -4,7 +4,7 @@
         <div class="card border-0 shadow-lg">
           <div class="card-body p-5">
             <div class="text-center mb-4">
-              <h2 class="text-dark-blue fw-bold">Perfil de Profesor</h2>
+              <h2 class="text-dark-blue fw-bold">Perfil</h2>
             </div>
             
             @if (successMessage) {
@@ -24,10 +24,10 @@
             <!-- Vista de información del perfil -->
             @if (!isEditing) {
               <div class="mb-4">
-                <div class="d-flex justify-content-between">
-                  <h3 class="h5 mb-3">Información Personal</h3>
+                <div class="d-flex justify-content-between mb-3">
+                  <h3 class="h5 ">Información Personal</h3>
                   <button (click)="toggleEdit()" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-pencil"></i> Editar
+                    <i class="bi bi-pencil "></i> Editar
                   </button>
                 </div>
                 <div class="card bg-light">

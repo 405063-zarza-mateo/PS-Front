@@ -20,13 +20,13 @@ export class ProfileService {
   constructor(private http: HttpClient) { }
 
   getUserProfile(): Observable<ProfileDto> {
-    return this.http.get<ProfileDto>(`${this.apiUrl}/api/teacher/profile`);
+    return this.http.get<ProfileDto>(`${this.apiUrl}/teacher/profile`);
   }
 
   updateProfile(data: string): Observable<ProfileDto> {
-    return this.http.put<ProfileDto>(`${this.apiUrl}/api/teacher/profile`, data);
+    return this.http.put<ProfileDto>(`${this.apiUrl}/teacher/profile`, data);
   }
 
   changePassword(data: PasswordChangeData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/auth/change-password`, data);
+    return this.http.post(`${this.apiUrl}/auth/change-password`, data);
   }}

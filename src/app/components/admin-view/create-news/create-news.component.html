@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-dark-blue text-white">
-                <h5 class="modal-title">Crear Noticia</h5>
+                <h5 class="modal-title">{{ newsItem ? 'Editar Noticia' : 'Crear Noticia' }}</h5>
                 <button type="button" class="btn-close btn-close-white" (click)="close.emit()"></button>
             </div>
             <div class="modal-body p-4">
@@ -36,6 +36,9 @@
                         <label for="image" class="form-label">Imagen</label>
                         <input type="file" id="image" (change)="onFileSelected($event)"
                             placeholder="Adjuntar imágen de portada" class="form-control" />
+                        <small class="form-text text-muted" *ngIf="newsItem && !imageChanged">
+                            * Deja este campo vacío si no deseas cambiar la imagen actual
+                        </small>
                     </div>
 
                     <div class="mb-3" *ngIf="imagePreview">
@@ -50,8 +53,12 @@
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="newsForm.invalid">
-                            Crear Noticia
+                        <button type="button" class="btn btn-secondary rounded-pill px-4 me-2" (click)="close.emit()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="newsForm.invalid || submitting">
+                            {{ newsItem ? 'Actualizar' : 'Crear' }} Noticia
+                            <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true" *ngIf="submitting"></span>
                         </button>
                     </div>
                 </form>

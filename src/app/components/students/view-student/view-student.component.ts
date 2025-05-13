@@ -137,7 +137,6 @@ export class ViewStudentComponent implements OnInit, OnDestroy {
         this.saving = false;
         this.editMode = false;
 
-        // Actualizar la información del estudiante en la interfaz
         if (this.student) {
           this.student = { ...result };
           this.updated.emit(result);
@@ -169,7 +168,6 @@ export class ViewStudentComponent implements OnInit, OnDestroy {
   }
 
   formatSubjectName(subject: string): string {
-    // Convertimos el nombre de la asignatura en un formato más legible
     switch (subject) {
       case 'Matematica':
         return 'Matemática';
