@@ -37,6 +37,7 @@ export class RecoveryComponent {
           this.submitSuccess = true;
         },
         error: (err) => {
+
           this.isSubmitting = false;
           this.errorMessage = err.error?.message || 'Error al procesar la solicitud. Por favor intente nuevamente.';
         }

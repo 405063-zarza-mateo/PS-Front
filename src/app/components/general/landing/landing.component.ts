@@ -159,6 +159,7 @@ export class LandingComponent implements OnInit, OnDestroy {
   closeDeleteModal(): void {
     this.isDeleteModalOpen = false;
     this.selectedNews = null;
+    this.loadNews();
     this.newsToDeleteId = null;
   }
 

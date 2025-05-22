@@ -1,5 +1,9 @@
 import { Routes } from '@angular/router';
 import { adminGuard, authGuard } from './guards/auth.guard';
+import { DonationSuccessComponent } from './components/general/donations/donation-success/donation-success.component';
+import { DonationFailureComponent } from './components/general/donations/donation-failure/donation-failure.component';
+import { DonationPendingComponent } from './components/general/donations/donation-pending/donation-pending.component';
+import { DonationComponent } from './components/general/donations/donation/donation.component';
 
 export const routes: Routes = [
     {
@@ -15,7 +19,7 @@ export const routes: Routes = [
     {
         path: 'register/waiting',
         loadComponent: () => import('./components/users/waiting-confirmation/waiting-confirmation.component')
-            .then(m => m.WaitingConfirmationComponent)     
+            .then(m => m.WaitingConfirmationComponent)
     }, {
 
         path: 'reset-password',
@@ -43,7 +47,7 @@ export const routes: Routes = [
     {
         path: 'teachers',
         loadComponent: () => import('./components/admin-view/teachers-list/teachers-list.component')
-            .then(m => m.TeachersListComponent), canActivate: [ adminGuard]
+            .then(m => m.TeachersListComponent), canActivate: [adminGuard]
     },
     {
         path: 'allow-list',
@@ -59,6 +63,33 @@ export const routes: Routes = [
         path: 'inventory',
         loadComponent: () => import('./components/admin-view/inventory/inventory-list/inventory-list.component')
             .then(m => m.InventoryListComponent), canActivate: [authGuard, adminGuard]
+    },
+    {
+        path: 'dashboard',
+        loadComponent: () => import('./components/admin-view/data/student-dashboard/student-dashboard.component')
+            .then(m => m.StudentDashboardComponent), canActivate: [authGuard, adminGuard]
+    },
+
+    {
+        path: 'students/admin',
+        loadComponent: () => import('./components/admin-view/data/student-list-admin/student-list-admin.component')
+            .then(m => m.StudentListAdminComponent), canActivate: [authGuard, adminGuard]
+    },
+    {
+        path: 'donation', loadComponent: () => import('./components/general/donations/donation/donation.component')
+            .then(m => m.DonationComponent)
+    },
+    {
+        path: 'donation/success', loadComponent: () => import('./components/general/donations/donation-success/donation-success.component')
+            .then(m => m.DonationSuccessComponent)
+    },
+    {
+        path: 'donation/failure', loadComponent: () => import('./components/general/donations/donation-failure/donation-failure.component')
+            .then(m => m.DonationFailureComponent)
+    },
+    {
+        path: 'donation/pending', loadComponent: () => import('./components/general/donations/donation-pending/donation-pending.component')
+            .then(m => m.DonationPendingComponent)
     },
     {
         path: '',

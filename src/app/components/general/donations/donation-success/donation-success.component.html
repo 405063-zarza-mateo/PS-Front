@@ -1,0 +1,27 @@
+<p>donation-success works!</p>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-lg">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+              <i class="bi bi-check-lg" style="font-size: 2.5rem;"></i>
+            </div>
+            <h2 class="text-dark-blue fw-bold">¡Gracias por tu donación!</h2>
+          </div>
+
+          <div class="text-center mt-4">
+            <p class="h5">Tu aporte ha sido procesado correctamente.</p>
+            <p>ID de pago: {{ paymentId }}</p>
+            <p class="mt-4">Tu generosidad nos permite continuar brindando apoyo educativo y alimentación a los niños y jóvenes de nuestra comunidad.</p>
+            
+            <div class="mt-5">
+              <a routerLink="/" class="btn btn-primary">Volver al inicio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

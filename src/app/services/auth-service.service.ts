@@ -1,5 +1,5 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -80,7 +80,10 @@ export class AuthService {
   }
 
   resetPassword(email: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/reset-password`, { email })
+    const params = new HttpParams().set('email', email);
+
+
+    return this.http.post<any>(`${this.apiUrl}/reset-password`, null, { params })
       .pipe(
         catchError(error => {
           console.error('Reset password error:', error);

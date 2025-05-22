@@ -1,0 +1,106 @@
+<div class="container py-4">
+  <h1 class="h3 mb-3 text-primary">Dashboard de Rendimiento de Alumnos</h1>
+  
+  <!-- Filtros -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Filtros</h5>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="studentFilter" class="form-label">Alumno</label>
+            <input type="text" class="form-control" id="studentFilter" 
+                   [(ngModel)]="selectedStudent" 
+                   (ngModelChange)="onFilterChange()"
+                   placeholder="Buscar por nombre...">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="courseFilter" class="form-label">Curso</label>
+            <select class="form-select" id="courseFilter" 
+                    [(ngModel)]="selectedCourse" 
+                    (ngModelChange)="onFilterChange()">
+              <option value="">Todos los cursos</option>
+              @for (course of courses; track course) {
+                <option [value]="course">{{ formatCourseName(course) }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="subjectFilter" class="form-label">Asignatura</label>
+            <select class="form-select" id="subjectFilter" 
+                    [(ngModel)]="selectedSubject" 
+                    (ngModelChange)="onFilterChange()">
+              <option value="">Todas las asignaturas</option>
+              @for (subject of subjects; track subject) {
+                <option [value]="subject">{{ subject }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-outline-secondary w-100" (click)="resetFilters()">
+            <i class="bi bi-x-lg me-1"></i> Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div class="alert alert-danger mb-4" *ngIf="error">
+    {{ error }}
+    <button type="button" class="btn-close float-end" (click)="error = ''"></button>
+  </div>
+
+  <!-- Indicador de carga -->
+  @if (isLoading) {
+    <div class="spinner-container text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-2 text-muted">Cargando datos...</p>
+    </div>
+  }
+
+  <!-- Dashboard de Gráficos -->
+  <div class="row g-4" *ngIf="!isLoading">
+    <!-- Rendimiento por asignatura -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            {{ selectedStudent ? 'Rendimiento del Alumno por Asignatura' : 'Rendimiento Promedio por Asignatura' }}
+          </h5>
+          <app-student-performance-chart [chartData]="performanceData"></app-student-performance-chart>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Comparación entre cursos -->
+    <div class="col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">
+            {{ selectedSubject ? 'Rendimiento de ' + selectedSubject + ' por Curso' : 'Rendimiento Promedio por Curso' }}
+          </h5>
+          <app-course-comparison-chart [chartData]="courseComparisonData"></app-course-comparison-chart>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Progreso de asignaturas a lo largo del tiempo -->
+    <div class="col-md-12">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Progreso de Rendimiento a lo Largo del Tiempo</h5>
+          <app-subject-progress-chart [chartData]="subjectProgressData"></app-subject-progress-chart>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>

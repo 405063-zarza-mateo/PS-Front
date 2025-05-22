@@ -1,0 +1,75 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-lg">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <h2 class="text-dark-blue fw-bold">Colaborar con El Galponcito</h2>
+            <p class="lead">Tu donación nos ayuda a seguir brindando apoyo a los niños y jóvenes de la comunidad</p>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold">Selecciona el monto a donar</label>
+            
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <ng-container *ngFor="let amount of predefinedAmounts">
+                <button 
+                  [class.btn-primary]="donationAmount === amount && !isCustomAmount"
+                  [class.btn-outline-primary]="donationAmount !== amount || isCustomAmount"
+                  class="btn"
+                  (click)="selectAmount(amount)">
+                  ${{ amount }}
+                </button>
+              </ng-container>
+              
+              <button 
+                [class.btn-primary]="isCustomAmount"
+                [class.btn-outline-primary]="!isCustomAmount"
+                class="btn"
+                (click)="enableCustomAmount()">
+                Otro
+              </button>
+            </div>
+            
+            <div class="mb-3" *ngIf="isCustomAmount">
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  placeholder="Ingrese monto personalizado"
+                  [value]="customAmount"
+                  (input)="updateCustomAmount($event)"
+                  min="1">
+              </div>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button 
+              class="btn btn-primary btn-lg"
+              [disabled]="loading || donationAmount <= 0"
+              (click)="processDonation()">
+              <span *ngIf="!loading">Donar ${{ donationAmount }}</span>
+              <span *ngIf="loading">
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Procesando...
+              </span>
+            </button>
+          </div>
+          
+          <div *ngIf="error" class="alert alert-danger mt-3 text-center">
+            {{ error }}
+          </div>
+          
+          <div class="text-center mt-4">
+            <small class="text-muted">
+              Tu donación será procesada de forma segura por Mercado Pago.
+              <br>Recibirás un comprobante de tu aporte por correo electrónico.
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

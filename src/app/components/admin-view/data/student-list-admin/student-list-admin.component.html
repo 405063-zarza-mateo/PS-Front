@@ -1,0 +1,178 @@
+<div class="container py-4">
+  <h1 class="h3 mb-2 text-primary">Listado de Alumnos (Admin)</h1>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Filtros -->
+    <div class="d-flex gap-2">
+      <!-- Filtrar por curso -->
+      <div class="input-group">
+        <span class="input-group-text bg-light py-1">
+          <i class="bi bi-filter"></i>
+        </span>
+        <select class="form-select py-1" style="height: 4vh;" aria-label="Filtrar por curso..."
+          (change)="onCourseChange($event)" [value]="selectedCourse">
+          <option value="">Curso...</option>
+          @for (course of courses; track course) {
+          <option [value]="course">{{ formatCourse(course) }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Buscar -->
+      <div class="input-group">
+        <span class="input-group-text bg-light py-1">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control py-1" style="height: 4vh;" placeholder="Buscar por nombre..."
+          (input)="onSearch($event)" [value]="searchTerm">
+      </div>
+
+      <!-- Botón para limpiar filtros -->
+      <button *ngIf="searchTerm || selectedCourse" class="btn btn-outline-secondary py-1" style="height: 4vh;"
+        (click)="resetFilters()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Botones de exportación -->
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-success" (click)="exportToExcel()">
+        <i class="bi bi-file-earmark-excel me-1"></i> Exportar a Excel
+      </button>
+      <button class="btn btn-outline-primary" (click)="exportToStata()">
+        <i class="bi bi-file-earmark-code me-1"></i> Exportar para Stata
+      </button>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div class="alert alert-danger mb-4" *ngIf="error">
+    {{ error }}
+    <button type="button" class="btn-close float-end" (click)="error = ''"></button>
+  </div>
+
+  <!-- Mensaje de éxito -->
+  @if (successMessage) {
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+  </div>
+  }
+
+  <!-- Indicador de carga -->
+  @if (isLoading) {
+  <div class="spinner-container text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2 text-muted">Cargando estudiantes...</p>
+  </div>
+  }
+
+  <div class="card border-0 shadow-sm" *ngIf="!isLoading">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th scope="col" (click)="onSortChange('name')" style="cursor: pointer">
+                Nombre
+                <i *ngIf="sortBy === 'name'" class="bi"
+                  [ngClass]="sortDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up'"></i>
+              </th>
+              <th scope="col" (click)="onSortChange('lastName')" style="cursor: pointer">
+                Apellido
+                <i *ngIf="sortBy === 'lastName'" class="bi"
+                  [ngClass]="sortDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up'"></i>
+              </th>
+              <th scope="col" (click)="onSortChange('course')" style="cursor: pointer">
+                Curso
+                <i *ngIf="sortBy === 'course'" class="bi"
+                  [ngClass]="sortDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up'"></i>
+              </th>
+              <th scope="col" (click)="onSortChange('assistance')" style="cursor: pointer">
+                Asistencia
+                <i *ngIf="sortBy === 'assistance'" class="bi"
+                  [ngClass]="sortDirection === 'asc' ? 'bi-sort-numeric-down' : 'bi-sort-numeric-up'"></i>
+              </th>
+              <th scope="col">Matemática</th>
+              <th scope="col">Escritura</th>
+              <th scope="col">Lectura</th>
+              <th scope="col">Disciplina</th>
+              <th scope="col">Profesor</th>
+              <th scope="col" (click)="onSortChange('date')" style="cursor: pointer">
+                Fecha
+                <i *ngIf="sortBy === 'date'" class="bi"
+                  [ngClass]="sortDirection === 'asc' ? 'bi-sort-down' : 'bi-sort-up'"></i>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (student of paginatedStudents; track student.id) {
+            @if (getReviews(student).length > 0) {
+            @for (review of getReviews(student); track review) {
+            <tr>
+              <td>{{ student.name }}</td>
+              <td>{{ student.lastName }}</td>
+              <td> {{formatCourse(student.course)}}
+              </td>
+              <td>{{ student.assistance }}</td>
+              <td [ngClass]="getScoreClass(getSubjectScore(review.results, 'Matematica'))">
+                {{getSubjectScore(review.results, 'Matematica') }}</td>
+              <td [ngClass]="getScoreClass(getSubjectScore(review.results, 'Escritura'))">
+                {{ getSubjectScore(review.results, 'Escritura') }}</td>
+              <td [ngClass]="getScoreClass(getSubjectScore(review.results, 'Lectura'))">
+                {{ getSubjectScore(review.results, 'Lectura') }}</td>
+              <td [ngClass]="getScoreClass(getSubjectScore(review.results, 'Disciplina'))">
+                {{ getSubjectScore(review.results, 'Disciplina') }}</td>
+              <td>{{ review.teacher.name }} {{ review.teacher.lastName }}</td>
+              <td>{{ review.date | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+            }
+            } @else {
+            <tr>
+              <td>{{ student.name }}</td>
+              <td>{{ student.lastName }}</td>
+              <td> {{formatCourse(student.course)}}
+              </td>
+              <td>{{ student.assistance }}</td>
+              <td colspan="6" class="text-muted text-center">Sin reseñas disponibles</td>
+            </tr>
+            }
+            } @empty {
+            <tr>
+              <td colspan="10" class="text-center py-4">
+                <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
+                <p class="mb-0">No hay estudiantes disponibles</p>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="card-footer bg-white py-3">
+      <nav>
+        <ul class="pagination justify-content-end mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" href="#" (click)="goToPage(currentPage - 1); $event.preventDefault()">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+          @for (page of pageNumbers; track page) {
+          <li class="page-item" [class.active]="page === currentPage">
+            <a class="page-link" href="#" (click)="goToPage(page); $event.preventDefault()">{{ page }}</a>
+          </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" href="#" (click)="goToPage(currentPage + 1); $event.preventDefault()">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

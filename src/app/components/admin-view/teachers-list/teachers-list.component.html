@@ -69,6 +69,7 @@
             <tr>
               <th scope="col">Nombre Completo</th>
               <th scope="col">Curso</th>
+              <th scope="col">Asistencia</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
@@ -87,6 +88,11 @@
                 @else {
                 {{ teacher.course }}
                 }
+              </td>
+               <td>
+                <div class="d-flex align-items-center">
+                  <div>{{ teacher.assistance }}</div>
+                </div>
               </td>
               <td>
                 <div class="btn-group">
