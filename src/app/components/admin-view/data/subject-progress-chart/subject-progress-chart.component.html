@@ -1,3 +1,31 @@
+<!-- Filtros de fecha -->
+<div class="row mb-3">
+  <div class="col-md-4">
+    <label for="startDate" class="form-label">Fecha Inicio</label>
+    <input type="date" 
+           class="form-control" 
+           id="startDate"
+           [(ngModel)]="startDate" 
+           (ngModelChange)="onDateRangeChange()">
+  </div>
+  <div class="col-md-4">
+    <label for="endDate" class="form-label">Fecha Fin</label>
+    <input type="date" 
+           class="form-control" 
+           id="endDate"
+           [(ngModel)]="endDate" 
+           (ngModelChange)="onDateRangeChange()">
+  </div>
+  <div class="col-md-4 d-flex align-items-end">
+    <button class="btn btn-outline-primary" 
+            (click)="setDefaultDateRange(); onDateRangeChange();">
+      <i class="bi bi-arrow-clockwise me-1"></i>
+      Semestre Actual
+    </button>
+  </div>
+</div>
+
+<!-- Gráfico -->
 <div *ngIf="processedData && processedData.length > 0; else noData" class="chart-container" style="width: 100%; height: 300px;">
   <google-chart
     [type]="chartType"
@@ -7,8 +35,9 @@
     [height]="height">
   </google-chart>
 </div>
+
 <ng-template #noData>
   <div class="text-center p-4 text-muted">
-    <p>No hay datos disponibles para mostrar.</p>
+    <p>No hay datos disponibles para el rango de fechas seleccionado.</p>
   </div>
 </ng-template>

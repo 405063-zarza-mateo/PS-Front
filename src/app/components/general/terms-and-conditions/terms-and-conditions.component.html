@@ -1,0 +1,439 @@
+<div class="terms-conditions-page">
+  <!-- Header -->
+  <section class="hero bg-dark-blue text-white py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10 text-center">
+          <h1 class="display-4 fw-bold mb-3">Términos y Condiciones</h1>
+          <p class="mb-0">Última actualización: Junio 2025 | Versión 1.0</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Navigation -->
+  <section class="bg-light py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h5 class="text-dark-blue mb-3">Navegación Rápida:</h5>
+          <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-sm btn-outline-primary" (click)="scrollToSection('info-general')">
+              Información General
+            </button>
+            <button class="btn btn-sm btn-outline-primary" (click)="scrollToSection('registro')">
+              Registro y Acceso
+            </button>
+            <button class="btn btn-sm btn-outline-primary" (click)="scrollToSection('donaciones')">
+              Donaciones
+            </button>
+            <button class="btn btn-sm btn-outline-primary" (click)="scrollToSection('proteccion-datos')">
+              Protección de Datos
+            </button>
+            <button class="btn btn-sm btn-outline-primary" (click)="scrollToSection('responsabilidades')">
+              Responsabilidades
+            </button>
+            <button class="btn btn-sm btn-outline-primary" (click)="scrollToSection('jurisdiccion')">
+              Jurisdicción
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 mx-auto">
+          
+          <!-- Información General -->
+          <div id="info-general" class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-info-circle text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h2 class="text-dark-blue mb-0">Información General</h2>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <p><strong>Proyecto:</strong> El Galponcito - Sistema de Gestión Educativa</p>
+                  <p><strong>Desarrollador:</strong> Mateo Zarza Lascano</p>
+                  <p><strong>Entidad:</strong> Ateneo Juventus Córdoba</p>
+                </div>
+                <div class="col-md-6">
+                  <p><strong>Ubicación:</strong> Villa Revol, Córdoba, Argentina</p>
+                  <p><strong>Naturaleza:</strong> Sin fines de lucro, educativo y social</p>
+                  <p><strong>Contacto:</strong> mateozarzalascano&#64;gmail.com</p>
+                </div>
+              </div>
+              <div class="alert alert-info">
+                <i class="bi bi-mortarboard me-2"></i>
+                <strong>Proyecto Académico:</strong> Desarrollado como proyecto final de la carrera de Programación 
+                en la Universidad Tecnológica de Córdoba.
+              </div>
+            </div>
+          </div>
+
+          <!-- Aceptación de Términos -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-check-circle text-success me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Aceptación de los Términos</h3>
+              </div>
+              <p>Al acceder y utilizar <strong>El Galponcito</strong>, usted expresa su consentimiento y entendimiento 
+              de estos Términos y Condiciones. Si no está de acuerdo con estos términos, no utilice el servicio.</p>
+            </div>
+          </div>
+
+          <!-- Descripción del Servicio -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-gear text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Descripción del Servicio</h3>
+              </div>
+              <p>El Galponcito es una plataforma web desarrollada en Angular 18 que permite:</p>
+              
+              <div class="row g-3 mt-3">
+                <div class="col-md-4">
+                  <div class="card h-100 border-primary">
+                    <div class="card-body text-center">
+                      <i class="bi bi-person-gear text-primary mb-2" style="font-size: 2rem;"></i>
+                      <h5>Administradores</h5>
+                      <ul class="list-unstyled small">
+                        <li>• Gestión de datos de niños</li>
+                        <li>• Administración de profesores</li>
+                        <li>• Reportes estadísticos</li>
+                        <li>• Supervisión de reseñas</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                      <i class="bi bi-person-check text-success mb-2" style="font-size: 2rem;"></i>
+                      <h5>Profesores</h5>
+                      <ul class="list-unstyled small">
+                        <li>• Acceso a lista de alumnos</li>
+                        <li>• Creación de reseñas diarias</li>
+                        <li>• Seguimiento educativo</li>
+                        <li>• Reportes de progreso</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card h-100 border-warning">
+                    <div class="card-body text-center">
+                      <i class="bi bi-heart text-warning mb-2" style="font-size: 2rem;"></i>
+                      <h5>Donantes</h5>
+                      <ul class="list-unstyled small">
+                        <li>• Donaciones via MercadoPago</li>
+                        <li>• Contribución directa</li>
+                        <li>• Transparencia en uso</li>
+                        <li>• Impacto social</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Registro y Acceso -->
+          <div id="registro" class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-person-plus text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Registro y Acceso al Sistema</h3>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <h5 class="text-primary">Requisitos de Registro</h5>
+                  <ul>
+                    <li>Dirección de correo electrónico válida</li>
+                    <li>Contraseña segura</li>
+                    <li>Información de perfil completa</li>
+                  </ul>
+                </div>
+                <div class="col-md-6">
+                  <h5 class="text-success">Proceso de Habilitación</h5>
+                  <ul>
+                    <li>Aprobación administrativa requerida</li>
+                    <li>Acceso solo a personal autorizado</li>
+                    <li>Verificación de credenciales</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div class="alert alert-warning">
+                <i class="bi bi-shield-exclamation me-2"></i>
+                <strong>Responsabilidad:</strong> Los usuarios son responsables de mantener la confidencialidad 
+                de sus credenciales y notificar cualquier uso no autorizado.
+              </div>
+            </div>
+          </div>
+
+          <!-- Uso Permitido -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-check2-square text-success me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Uso Permitido y Restricciones</h3>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                      <i class="bi bi-check-circle me-2"></i>Uso Autorizado
+                    </div>
+                    <div class="card-body">
+                      <ul class="mb-0">
+                        <li>Fines educativos y de asistencia social</li>
+                        <li>Gestión administrativa del comedor</li>
+                        <li>Generación de reportes de mejora</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card border-danger">
+                    <div class="card-header bg-danger text-white">
+                      <i class="bi bi-x-circle me-2"></i>Restricciones
+                    </div>
+                    <div class="card-body">
+                      <ul class="mb-0">
+                        <li>Compartir información de menores</li>
+                        <li>Uso comercial o lucrativo</li>
+                        <li>Acceso no autorizado</li>
+                        <li>Compromiso de seguridad</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Donaciones -->
+          <div id="donaciones" class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-credit-card text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Donaciones y Procesamiento de Pagos</h3>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-8">
+                  <h5 class="text-primary">Plataforma de Pagos</h5>
+                  <p>Las donaciones se procesan exclusivamente a través de <strong>MercadoPago</strong>:</p>
+                  <ul>
+                    <li>Transferencias bancarias</li>
+                    <li>Tarjetas de crédito</li>
+                    <li>Tarjetas de débito</li>
+                  </ul>
+                  
+                  <h5 class="text-success mt-4">Destino de las Donaciones</h5>
+                  <p>El <strong>100%</strong> de las donaciones se destina a:</p>
+                  <ul>
+                    <li>Insumos para el desayuno de los niños</li>
+                    <li>Materiales educativos y didácticos</li>
+                    <li>Mejoras en la infraestructura del comedor</li>
+                  </ul>
+                </div>
+                <div class="col-md-4">
+                  <div class="card bg-light">
+                    <div class="card-body text-center">
+                      <i class="bi bi-transparency text-primary mb-3" style="font-size: 3rem;"></i>
+                      <h5>Transparencia</h5>
+                      <p class="small">Las donaciones son administradas por Ateneo Juventus Córdoba bajo principios de transparencia y responsabilidad social.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Protección de Datos -->
+          <div id="proteccion-datos" class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-shield-lock text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Protección de Datos de Menores</h3>
+              </div>
+              
+              <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>Datos Sensibles:</strong> El sistema maneja información de menores de edad con medidas 
+                especiales de protección conforme a la Ley Nacional 25.326 y la Convención sobre los Derechos del Niño.
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <h5 class="text-primary">Acceso Restringido</h5>
+                  <ul>
+                    <li>Solo personal autorizado</li>
+                    <li>Uso exclusivamente educativo</li>
+                    <li>Prohibición de otros usos</li>
+                  </ul>
+                </div>
+                <div class="col-md-6">
+                  <h5 class="text-success">Medidas de Seguridad</h5>
+                  <ul>
+                    <li>Autenticación segura</li>
+                    <li>Registros de auditoría</li>
+                    <li>Copias de seguridad periódicas</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Responsabilidades -->
+          <div id="responsabilidades" class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-person-check text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Responsabilidades y Limitaciones</h3>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                      <i class="bi bi-person-check me-2"></i>Responsabilidades del Usuario
+                    </div>
+                    <div class="card-body">
+                      <ul class="mb-0">
+                        <li>Uso ético y responsable</li>
+                        <li>Confidencialidad de información</li>
+                        <li>Reporte de incidentes</li>
+                        <li>Cumplimiento de políticas</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                      <i class="bi bi-exclamation-triangle me-2"></i>Limitaciones de Responsabilidad
+                    </div>
+                    <div class="card-body">
+                      <ul class="mb-0">
+                        <li>Servicio "tal como está"</li>
+                        <li>Sin garantía 24/7</li>
+                        <li>Soporte según disponibilidad</li>
+                        <li>Mejoras según recursos</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vigencia y Terminación -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-calendar-check text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Vigencia y Terminación</h3>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <h5 class="text-primary">Terminación por el Usuario</h5>
+                  <p>Los usuarios pueden discontinuar el uso en cualquier momento notificando a la administración.</p>
+                  
+                  <h5 class="text-warning">Terminación del Servicio</h5>
+                  <p>El desarrollador puede discontinuar el servicio con 60 días de antelación.</p>
+                </div>
+                <div class="col-md-6">
+                  <h5 class="text-danger">Terminación por Administración</h5>
+                  <p>Ateneo Juventus puede terminar el acceso por:</p>
+                  <ul>
+                    <li>Incumplimiento de términos</li>
+                    <li>Uso indebido del sistema</li>
+                    <li>Riesgo de seguridad</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Jurisdicción -->
+          <div id="jurisdiccion" class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-geo-alt text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Jurisdicción y Ley Aplicable</h3>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <h5 class="text-primary">Jurisdicción</h5>
+                  <ul>
+                    <li>Leyes de la República Argentina</li>
+                    <li>Jurisdicción de la Provincia de Córdoba</li>
+                    <li>Tribunales de la Ciudad de Córdoba</li>
+                  </ul>
+                </div>
+                <div class="col-md-6">
+                  <h5 class="text-success">Resolución de Conflictos</h5>
+                  <ol>
+                    <li>Negociación directa</li>
+                    <li>Mediación si es necesaria</li>
+                    <li>Tribunales como última instancia</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contacto -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-envelope text-primary me-3" style="font-size: 1.5rem;"></i>
+                <h3 class="text-dark-blue mb-0">Contacto y Soporte</h3>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <h5 class="text-primary">Información de Contacto</h5>
+                  <p><strong>Email:</strong> mateozarzalascano&#64;gmail.com</p>
+                  <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/mateo-zarza-lascano" target="_blank" class="text-decoration-none"> Mateo Zarza Lascano</a></p>
+                </div>
+                <div class="col-md-6">
+                  <h5 class="text-success">Para consultas sobre:</h5>
+                  <ul>
+                    <li>Soporte técnico</li>
+                    <li>Reclamos</li>
+                    <li>Sugerencias</li>
+                    <li>Reportes de seguridad</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="text-center py-4 border-top">
+            <p class="text-muted mb-1">
+              <strong>Fecha de última actualización:</strong> Enero 2025 | <strong>Versión:</strong> 1.0
+            </p>
+            <p class="text-muted small">
+              Este documento fue elaborado para el proyecto académico "El Galponcito" desarrollado por Mateo Zarza Lascano 
+              como proyecto final de la carrera de Programación en la Universidad Tecnológica de Córdoba.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -6,6 +6,7 @@ import { Teacher } from '../models/teacher';
 import { isPlatformBrowser } from '@angular/common';
 import { Review } from '../models/review';
 import { TeacherReviewDto } from '../models/teacherReviewDto';
+import { AssistanceDto } from '../models/assistanceDto';
 
 @Injectable({
   providedIn: 'root'
@@ -85,4 +86,8 @@ export class TeacherService {
         })
       );
   }
+
+   getStudentAssistances(): Observable<AssistanceDto[]> {
+  return this.http.get<AssistanceDto[]>(`${this.apiUrl}/assistances`);
+}
 }

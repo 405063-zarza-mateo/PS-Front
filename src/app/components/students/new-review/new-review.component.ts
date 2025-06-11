@@ -27,6 +27,8 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   saving = false;
   errorMessage = '';
   teachers: Teacher[] = [];
+  minDate = '';
+  maxDate = '';
 
   private subscriptions: Subscription[] = [];
 
@@ -38,13 +40,15 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Ya no necesitamos llamar setDateLimits aquí porque se llama en createForm
     
     // Inicializar los checkboxes como marcados por defecto
     this.reviewForm.patchValue({
       matematicaWorked: true,
       lecturaWorked: true,
       escrituraWorked: true,
-      disciplinaWorked: true
+      disciplinaWorked: true,
+      date: this.getDefaultDate() // Establecer fecha por defecto después de tener las fechas disponibles
     });
   }
 
@@ -53,8 +57,10 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   }
 
   createForm(): FormGroup {
+    this.setDateLimits(); // Llamar primero para establecer las fechas disponibles
+    
     return this.fb.group({
-      date: [new Date().toISOString().substring(0, 10), [Validators.required]],
+      date: ['', [Validators.required, this.dateValidator.bind(this)]],
       
       // Asignaturas con sus scores
       matematica: [50],
@@ -68,6 +74,131 @@ export class NewReviewComponent implements OnInit, OnDestroy {
       escrituraWorked: [true],
       disciplinaWorked: [true]
     });
+  }
+
+  setDateLimits(): void {
+    // Obtener fecha actual en Buenos Aires
+    const now = new Date();
+    const buenosAiresTime = new Date(now.toLocaleString("en-US", {timeZone: "America/Argentina/Buenos_Aires"}));
+    
+    // Obtener el martes y sábado de la semana actual
+    const currentWeekDates = this.getTuesdayAndSaturday(buenosAiresTime);
+    
+    // Obtener el martes y sábado de la semana anterior
+    const previousWeek = new Date(buenosAiresTime);
+    previousWeek.setDate(previousWeek.getDate() - 7);
+    const previousWeekDates = this.getTuesdayAndSaturday(previousWeek);
+    
+    // Combinar todas las fechas disponibles y filtrar solo las que no son futuras
+    const allDates = [
+      ...previousWeekDates,
+      ...currentWeekDates
+    ];
+    
+    // Filtrar fechas que no sean futuras (solo hasta hoy)
+    this.availableDates = allDates
+      .filter(date => date <= buenosAiresTime)
+      .sort((a, b) => a.getTime() - b.getTime());
+    
+    // No establecer límites min/max para permitir que solo el validador controle las fechas
+    this.minDate = '';
+    this.maxDate = '';
+  }
+
+  availableDates: Date[] = [];
+
+  getTuesdayAndSaturday(referenceDate: Date): Date[] {
+    const dates: Date[] = [];
+    const date = new Date(referenceDate);
+    
+    // Encontrar el lunes de la semana
+    const dayOfWeek = date.getDay();
+    const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    date.setDate(date.getDate() + daysToMonday);
+    
+    // Martes (lunes + 1)
+    const tuesday = new Date(date);
+    tuesday.setDate(date.getDate() + 1);
+    dates.push(tuesday);
+    
+    // Sábado (lunes + 5)
+    const saturday = new Date(date);
+    saturday.setDate(date.getDate() + 5);
+    dates.push(saturday);
+    
+    return dates;
+  }
+
+  formatDateForInput(date: Date): string {
+    return date.toISOString().substring(0, 10);
+  }
+
+  getDefaultDate(): string {
+    if (this.availableDates.length === 0) {
+      return '';
+    }
+    
+    // Obtener fecha actual en Buenos Aires
+    const now = new Date();
+    const today = new Date(now.toLocaleString("en-US", {timeZone: "America/Argentina/Buenos_Aires"}));
+    
+    // Verificar si hoy es martes o sábado y está en las fechas disponibles
+    const todayFormatted = this.formatDateForInput(today);
+    const isTodayAvailable = this.availableDates.some(date => 
+      this.formatDateForInput(date) === todayFormatted
+    );
+    
+    if (isTodayAvailable) {
+      return todayFormatted;
+    }
+    
+    // Si hoy no es martes/sábado o no está disponible, buscar la fecha más cercana a hoy
+    // pero que no sea futura
+    let closestDate = this.availableDates[0]; // Por defecto la primera (más antigua)
+    let minDifference = Math.abs(today.getTime() - this.availableDates[0].getTime());
+    
+    for (const date of this.availableDates) {
+      const difference = Math.abs(today.getTime() - date.getTime());
+      
+      // Si la fecha es de hoy o anterior y está más cerca que la actual seleccionada
+      if (date <= today && difference < minDifference) {
+        closestDate = date;
+        minDifference = difference;
+      }
+    }
+    
+    return this.formatDateForInput(closestDate);
+  }
+
+  getTempAvailableDates(referenceDate: Date): Date[] {
+    const currentWeekDates = this.getTuesdayAndSaturday(referenceDate);
+    const previousWeek = new Date(referenceDate);
+    previousWeek.setDate(previousWeek.getDate() - 7);
+    const previousWeekDates = this.getTuesdayAndSaturday(previousWeek);
+    
+    return [
+      ...previousWeekDates,
+      ...currentWeekDates
+    ].sort((a, b) => a.getTime() - b.getTime());
+  }
+
+  // Método para deshabilitar fechas que no son martes o sábado
+  isDateDisabled = (date: string): boolean => {
+    const selectedDate = new Date(date + 'T00:00:00');
+    return !this.availableDates.some(availableDate => 
+      this.formatDateForInput(availableDate) === date
+    );
+  }
+
+  dateValidator(control: any) {
+    if (!control.value) return null;
+    
+    const selectedDate = new Date(control.value);
+    const isValidDate = this.availableDates.some(date => 
+      this.formatDateForInput(date) === control.value
+    );
+    
+    return isValidDate ? null : { invalidDate: true };
   }
 
   get f() {
@@ -110,6 +241,9 @@ export class NewReviewComponent implements OnInit, OnDestroy {
     this.submitted = true;
 
     if (this.reviewForm.invalid || !this.selectedStudent) {
+      if (this.reviewForm.get('date')?.hasError('invalidDate')) {
+        this.errorMessage = 'Por favor seleccione una fecha válida (martes o sábado de la semana actual o anterior).';
+      }
       return;
     }
 
@@ -151,7 +285,11 @@ export class NewReviewComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.saving = false;
-        this.errorMessage = 'Error al crear la reseña. Por favor intente nuevamente.';
+        if (error.error && error.error.message) {
+          this.errorMessage = error.error.message;
+        } else {
+          this.errorMessage = 'Error al crear la reseña. Por favor intente nuevamente.';
+        }
         console.error('Error al crear la reseña:', error);
       }
     });

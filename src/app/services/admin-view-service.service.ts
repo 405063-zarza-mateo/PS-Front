@@ -9,6 +9,7 @@ import { Student } from '../models/student';
 import { StudentPostDto } from '../models/studentPostDto';
 import { Teacher } from '../models/teacher';
 import { Log } from '../models/log';
+import { TeacherResponse } from '../models/teacherRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,8 @@ import { Log } from '../models/log';
 export class AdminViewService {
 
  private apiUrl = `${environment.apiUrl}/admin`;
+  private apiUrl2 = `${environment.apiUrl}/teacher`;
+
   currentUser: any;
   teacherEmail: string = '';
   private isBrowser: boolean;
@@ -45,9 +48,8 @@ export class AdminViewService {
   }
 
   getTeachers(): Observable<Teacher[]> {
-    const params = new HttpParams().set('approved', true);
 
-    return this.http.get<Teacher[]>(`${this.apiUrl}/pending-teachers`, { params })
+    return this.http.get<Teacher[]>(`${this.apiUrl2}/all`)
       .pipe(
         catchError(error => {
           console.error('Error fetching teachers:', error);
@@ -92,6 +94,16 @@ export class AdminViewService {
       );
   }
 
+  respondRequests(list : TeacherResponse[]) : Observable<any>{
+        return this.http.post<Student>(`${this.apiUrl}/respond-request`,  list )
+      .pipe(
+        catchError(error => {
+          console.error('Error sending invites:', error);
+          return throwError(() => error);
+        })
+      );
+
+  }
   
     getLogs(): Observable<Log[]> {
       return this.http.get<Log[]>(`${this.apiUrl}/logs`);

@@ -26,9 +26,9 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
-      course: ['Curso', [Validators.required]]
-/*       termsAccepted: [false, [Validators.requiredTrue]]
- */    }, {
+      course: ['Curso', [Validators.required]],
+      termsAccepted: [false, [Validators.requiredTrue]]
+    }, {
       validators: this.passwordMatchValidator
     });
   }

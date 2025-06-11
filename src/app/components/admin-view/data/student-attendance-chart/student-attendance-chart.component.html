@@ -1,0 +1,87 @@
+<div class="attendance-chart-container">
+      <!-- Filtros de fecha -->
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label for="startDate" class="form-label">Fecha de inicio</label>
+          <input 
+            type="date" 
+            class="form-control" 
+            id="startDate"
+            [(ngModel)]="startDate" 
+            (ngModelChange)="onDateRangeChange()"
+            [max]="endDate">
+        </div>
+        <div class="col-md-4">
+          <label for="endDate" class="form-label">Fecha de fin</label>
+          <input 
+            type="date" 
+            class="form-control" 
+            id="endDate"
+            [(ngModel)]="endDate" 
+            (ngModelChange)="onDateRangeChange()"
+            [min]="startDate">
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+          <button 
+            class="btn btn-outline-primary me-2" 
+            (click)="setCurrentSemester()">
+            Semestre Actual
+          </button>
+          <button 
+            class="btn btn-outline-secondary" 
+            (click)="setCurrentYear()">
+            Año Completo
+          </button>
+        </div>
+      </div>
+
+      <!-- Gráfico -->
+      <div class="chart-wrapper" *ngIf="chartData.length > 0">
+        <div class="chart-container">
+          <google-chart
+            [type]="chartType"
+            [data]="chartData"
+            [columns]="chartColumns"
+            [options]="chartOptions"
+            [height]="chartHeight"
+            >
+          </google-chart>
+        </div>
+      </div>
+
+      <!-- Mensaje cuando no hay datos -->
+      <div class="alert alert-info text-center" *ngIf="chartData.length === 0">
+        <i class="bi bi-info-circle me-2"></i>
+        No hay datos de asistencia disponibles para el período seleccionado.
+      </div>
+
+      <!-- Estadísticas adicionales -->
+      <div class="row mt-3" *ngIf="chartData.length > 0">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="text-center">
+                    <div class="fs-4 fw-bold text-primary">{{ totalDays }}</div>
+                    <div class="text-muted small">Días con clases</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="text-center">
+                    <div class="fs-4 fw-bold text-success">{{ averageAttendance }}</div>
+                    <div class="text-muted small">Promedio diario</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="text-center">
+                    <div class="fs-4 fw-bold text-info">{{ maxAttendance }}</div>
+                    <div class="text-muted small">Máximo diario</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

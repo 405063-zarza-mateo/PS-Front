@@ -1,0 +1,72 @@
+.attendance-chart-container {
+  width: 100%;
+  max-width: 100%;
+  
+  .chart-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    
+    .chart-container {
+      width: 100%;
+      min-width: 800px; // Ancho mínimo para evitar que se comprima demasiado
+      height: 400px;
+      
+      // Hacer que el componente google-chart ocupe todo el espacio
+      google-chart {
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+        
+        // Estilos para el contenedor interno del gráfico
+        div {
+          width: 100% !important;
+          height: 100% !important;
+        }
+      }
+    }
+  }
+
+  // Estilos para los filtros de fecha
+  .form-label {
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .btn {
+    white-space: nowrap;
+  }
+
+  // Estilos para las estadísticas
+  .card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .card-title {
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #495057;
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    .chart-container {
+      min-width: 600px;
+      height: 300px;
+    }
+    
+    .btn {
+      font-size: 0.875rem;
+      padding: 0.375rem 0.75rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .chart-container {
+      min-width: 500px;
+      height: 250px;
+    }
+  }
+}

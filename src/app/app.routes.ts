@@ -29,7 +29,16 @@ export const routes: Routes = [
         path: 'home',
         loadComponent: () => import('./components/general/landing/landing.component')
             .then(m => m.LandingComponent)
-    }, {
+    },
+    {
+        path: 'terms',
+        loadComponent: () => import('./components/general/terms-and-conditions/terms-and-conditions.component').then(m => m.TermsAndConditionsComponent)
+    },
+{
+        path: 'faq',
+        loadComponent: () => import('./components/general/faq/faq.component').then(m => m.FaqComponent)
+    },
+    {
         path: 'students',
         loadComponent: () => import('./components/students/students-list/students-list.component')
             .then(m => m.StudentsListComponent), canActivate: [authGuard]

@@ -26,7 +26,7 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
   isLoading = false;
   error = '';
   successMessage = '';
-  
+
   // Filter properties
   searchTerm = '';
   selectedCourse = '';
@@ -41,7 +41,7 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
   // Courses list
   courses: String[] = [];
 
-  constructor(private studentService: StudentService) {}
+  constructor(private studentService: StudentService) { }
 
   ngOnInit(): void {
     this.loadStudents();
@@ -93,14 +93,14 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
       filtered = filtered.filter(student => {
-        const studentMatch = student.name.toLowerCase().includes(term) || 
-                             student.lastName.toLowerCase().includes(term);
+        const studentMatch = student.name.toLowerCase().includes(term) ||
+          student.lastName.toLowerCase().includes(term);
 
         const teacherMatch = student.reviews?.some(review => {
           const teacherFullName = `${review.teacher.name} ${review.teacher.lastName}`.toLowerCase();
-          return teacherFullName.includes(term) || 
-                 review.teacher.name.toLowerCase().includes(term) || 
-                 review.teacher.lastName.toLowerCase().includes(term);
+          return teacherFullName.includes(term) ||
+            review.teacher.name.toLowerCase().includes(term) ||
+            review.teacher.lastName.toLowerCase().includes(term);
         });
 
         return studentMatch || teacherMatch;
@@ -133,18 +133,27 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
           const bLatest = b.reviews.length ? new Date(b.reviews[b.reviews.length - 1].date).getTime() : 0;
           return (aLatest - bLatest) * dirMod;
         default:
-          return 0;
+          // Ordenamiento por defecto: curso, luego alfabéticamente
+          const courseOrder = this.courses.indexOf(a.course) - this.courses.indexOf(b.course);
+          if (courseOrder !== 0) return courseOrder;
+
+          const lastNameOrder = a.lastName.localeCompare(b.lastName);
+          if (lastNameOrder !== 0) return lastNameOrder;
+
+          return a.name.localeCompare(b.name);
       }
     });
 
     this.filteredStudents = filtered;
     this.totalItems = filtered.length;
-    
+
     // Reset to first page if no results on current page
     if (this.currentPage > this.totalPages && this.totalPages > 0) {
       this.currentPage = 1;
     }
   }
+
+
 
   onSearch(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value;
@@ -210,7 +219,8 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
   }
 
   getReviews(student: Student): Review[] {
-    return student.reviews || [];
+    const reviews = student.reviews || [];
+    return reviews.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
 
   getSubjectScore(results: Results[], subject: string): number | string {
@@ -229,6 +239,14 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
       if (score >= 70) return 'text-success fw-bold';
     }
     return '';
+  }
+
+  getGenderClass(gender: string): string {
+    if (gender == "Masculino") {
+      return "text-primary fw-bold"
+    } else if (gender == "Femenino") {
+      return "text-female fw-bold"
+    } return ""
   }
 
   // Helper para formatear nombre de curso en vista móvil
@@ -252,6 +270,7 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
         data.push({
           'Nombre': student.name,
           'Apellido': student.lastName,
+          'Sexo': student.gender,
           'Curso': student.course,
           'Asistencia': student.assistance,
           'Matemática': 'N/A',
@@ -266,6 +285,7 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
           data.push({
             'Nombre': student.name,
             'Apellido': student.lastName,
+            'Sexo': student.gender,
             'Curso': this.formatCourse(student.course),
             'Asistencia': student.assistance,
             'Matemática': this.getSubjectScore(review.results, 'Matematica'),
@@ -293,17 +313,17 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
   }
 
   exportToStata(): void {
-    let stataContent = 'id\tnombre\tapellido\tcurso\tasistencia\tmatematica\tescritura\tlectura\tdisciplina\tprofesor\tfecha\n';
+    let stataContent = 'id\tnombre\tapellido\tsexo\tcurso\tasistencia\tmatematica\tescritura\tlectura\tdisciplina\tprofesor\tfecha\n';
     let rowId = 1;
 
     this.filteredStudents.forEach(student => {
       const reviews = this.getReviews(student);
 
       if (reviews.length === 0) {
-        stataContent += `${rowId++}\t${student.name}\t${student.lastName}\t${this.formatCourse(student.course)}\t${student.assistance}\tN/A\tN/A\tN/A\tN/A\tN/A\tN/A\n`;
+        stataContent += `${rowId++}\t${student.name}\t${student.lastName}\t${student.gender}\t${this.formatCourse(student.course)}\t${student.assistance}\tN/A\tN/A\tN/A\tN/A\tN/A\tN/A\n`;
       } else {
         reviews.forEach(review => {
-          stataContent += `${rowId++}\t${student.name}\t${student.lastName}\t${this.formatCourse(student.course)}\t${student.assistance}\t`;
+          stataContent += `${rowId++}\t${student.name}\t${student.lastName}\t${student.gender}\t${this.formatCourse(student.course)}\t${student.assistance}\t`;
           stataContent += `${this.getSubjectScore(review.results, 'Matematica')}\t`;
           stataContent += `${this.getSubjectScore(review.results, 'Escritura')}\t`;
           stataContent += `${this.getSubjectScore(review.results, 'Lectura')}\t`;

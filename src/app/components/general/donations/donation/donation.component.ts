@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MercadoPagoService, PaymentRequest } from '../../../../services/mercado-pago-service.service';
+import { MercadoPagoService, DonationRequest } from '../../../../services/mercado-pago-service.service';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../environments/evironment';
 
@@ -18,6 +18,11 @@ export class DonationComponent implements OnInit {
   error: string | null = null;
   predefinedAmounts: number[] = [500, 1000, 2000, 5000];
   debugInfo: string | null = null;
+
+  private donorInfo = {
+    email: 'donante@ejemplo.com',
+    name: 'Donante Anónimo' 
+  };
 
   constructor(private mercadoPagoService: MercadoPagoService) { }
 
@@ -56,42 +61,40 @@ export class DonationComponent implements OnInit {
     this.error = null;
     this.debugInfo = null;
 
-    // Añadimos timestamp al externalReference para hacerlo único
     const timestamp = new Date().getTime();
-
-    // Configuramos las URLs de redirección directamente al frontend
-    const frontendUrl =  'http://localhost:4200';
     
-    const paymentRequest: PaymentRequest = {
-      title: 'Donación a El Galponcito',
-      description: 'Tu aporte ayuda a mejorar la educación de los niños en nuestra comunidad',
-      price: this.donationAmount,
-      quantity: 1,
-      currency: 'ARS',
-      externalReference: `DONACION-${timestamp}`,
-      // Aseguramos que las URLs de redirección sean correctas
-      successUrl: `${frontendUrl}/donation/success`,
-      failureUrl: `${frontendUrl}/donation/failure`,
-      pendingUrl: `${frontendUrl}/donation/pending`
+    // CORREGIDO: No enviar URLs personalizadas - dejar que el backend use sus defaults
+    const donationRequest: DonationRequest = {
+      amount: this.donationAmount,
+      description: `Donación a El Galponcito - $${this.donationAmount}`,
+      payerEmail: this.donorInfo.email,
+      payerName: this.donorInfo.name,
+      externalReference: `DONACION-${timestamp}`
+      // Eliminamos las URLs personalizadas para que el backend use las correctas
     };
 
-    console.log('Enviando solicitud de pago:', paymentRequest);
+    console.log('Enviando solicitud de donación:', donationRequest);
 
-    this.mercadoPagoService.createPayment(paymentRequest).subscribe({
+    this.mercadoPagoService.createDonation(donationRequest).subscribe({
       next: (response) => {
         console.log('Respuesta del servidor:', response);
 
-        if (response.success) {
-          // Usamos sandbox en entorno de desarrollo
-          const redirectUrl = !environment.production && response.sandboxInitPoint 
-            ? response.sandboxInitPoint 
-            : response.initPoint;
+        if (response.checkoutUrl) {
+          console.log(`Redirigiendo a MercadoPago: ${response.checkoutUrl}`);
           
-          console.log(`Redirigiendo a MercadoPago: ${redirectUrl}`);
-          window.location.href = redirectUrl;
+          // Guardamos información de la donación en sessionStorage para después
+          sessionStorage.setItem('donationInfo', JSON.stringify({
+            preferenceId: response.preferenceId,
+            amount: response.amount,
+            externalReference: response.externalReference,
+            timestamp: new Date().toISOString()
+          }));
+
+          // Redirigir a MercadoPago
+          window.location.href = response.checkoutUrl;
         } else {
-          this.error = response.error || 'Error al procesar la donación';
-          this.debugInfo = 'Detalles: ' + JSON.stringify(response);
+          this.error = 'No se recibió URL de pago válida';
+          this.debugInfo = 'Respuesta: ' + JSON.stringify(response);
         }
         this.loading = false;
       },
@@ -99,15 +102,34 @@ export class DonationComponent implements OnInit {
         console.error('Error en la solicitud:', err);
 
         let errorMsg = 'Error de conexión con el servidor';
-        if (err.error && typeof err.error === 'object') {
-          errorMsg = err.error.error || errorMsg;
+        
+        if (err.error) {
+          if (err.error.message) {
+            errorMsg = err.error.message;
+          } else if (err.error.validationErrors) {
+            const validationErrors = Object.values(err.error.validationErrors).join(', ');
+            errorMsg = `Errores de validación: ${validationErrors}`;
+          } else if (typeof err.error === 'string') {
+            errorMsg = err.error;
+          }
         } else if (err.message) {
           errorMsg = err.message;
         }
 
         this.error = errorMsg;
-        this.debugInfo = 'Detalles técnicos: ' + JSON.stringify(err);
+        this.debugInfo = `Status: ${err.status} - ${JSON.stringify(err.error)}`;
         this.loading = false;
+      }
+    });
+  }
+
+  checkServiceHealth(): void {
+    this.mercadoPagoService.healthCheck().subscribe({
+      next: (response) => {
+        console.log('Estado del servicio:', response);
+      },
+      error: (err) => {
+        console.error('Error al verificar el servicio:', err);
       }
     });
   }

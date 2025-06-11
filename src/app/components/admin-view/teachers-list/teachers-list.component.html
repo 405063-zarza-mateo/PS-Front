@@ -10,12 +10,11 @@
         <select class="form-select py-1" style="height: 4vh;" aria-label="Filtrar por curso..."
           (change)="onCourseChange($event)" [value]="selectedCourse">
           <option selected>Curso...</option>
+          <option value="Tercer_anio">Tercer año </option>
           <option value="Cuarto_anio">Cuarto año </option>
           <option value="Quinto_anio">Quinto año </option>
           <option value="Sexto_anio">Sexto año </option>
           <option value="Universidad">Universidad </option>
-
-
         </select>
       </div>
       <!-- Opcional: Botón para limpiar filtros -->
@@ -36,7 +35,6 @@
       </div>
     </div>
   </div>
-
 
   <!-- Mensaje de error -->
   <div class="alert alert-danger mb-4" *ngIf="error">
@@ -74,7 +72,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (teacher of filteredTeachers; track teacher.id) {
+            @for (teacher of paginatedTeachers; track teacher.id) {
             <tr>
               <td>
                 <div class="d-flex align-items-center">
@@ -89,7 +87,7 @@
                 {{ teacher.course }}
                 }
               </td>
-               <td>
+              <td>
                 <div class="d-flex align-items-center">
                   <div>{{ teacher.assistance }}</div>
                 </div>
@@ -102,15 +100,20 @@
                   <button type="button" class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(teacher.id)">
                     <i class="bi bi-trash"></i>
                   </button>
-
                 </div>
               </td>
             </tr>
             } @empty {
             <tr>
-              <td colspan="7" class="text-center py-4">
+              <td colspan="4" class="text-center py-4">
                 <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
-                <p class="mb-0">No hay profesores registrados</p>
+                <p class="mb-0">
+                  @if (searchTerm || selectedCourse !== 'Curso...') {
+                  No se encontraron profesores que coincidan con los filtros
+                  } @else {
+                  No hay profesores registrados
+                  }
+                </p>
               </td>
             </tr>
             }
@@ -118,28 +121,69 @@
         </table>
       </div>
     </div>
-    <div class="card-footer bg-white py-3">
-      <nav>
-        <ul class="pagination justify-content-end mb-0">
-          <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1"><i class="bi bi-chevron-left"></i></a>
-          </li>
-          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>
-          </li>
-        </ul>
-      </nav>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+      <small class="text-muted">
+        Mostrando {{ getStartItem() }} - {{ getEndItem() }} de {{ totalItems }} profesores
+      </small>
+
+      <div class="bg-white" *ngIf="totalPages > 1">
+        <nav>
+          <ul class="pagination justify-content-center mb-0">
+            <!-- Botón Primera Página -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToFirstPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-double-left"></i>
+              </button>
+            </li>
+
+            <!-- Botón Página Anterior -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            </li>
+
+            <!-- Números de página -->
+            @for (page of getPageNumbers(); track page) {
+            <li class="page-item" [class.active]="page === currentPage">
+              <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            </li>
+            }
+
+            <!-- Botón Página Siguiente -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </li>
+
+            <!-- Botón Última Página -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link" (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+                <i class="bi bi-chevron-double-right"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <label for="itemsPerPage" class="form-label mb-0 small">Items por página:</label>
+        <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;" [(ngModel)]="itemsPerPage"
+          (change)="currentPage = 1; applyFilters()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
     </div>
   </div>
 
-  <app-view-teacher 
-  [isOpen]="isDetailsModalOpen" 
-  [teacher]="selectedTeacher" 
-  (close)="closeDetailsModal()">
-</app-view-teacher>
+  <app-view-teacher [isOpen]="isDetailsModalOpen" [teacher]="selectedTeacher" (close)="closeDetailsModal()">
+  </app-view-teacher>
 
   <app-delete-teacher [isOpen]="isDeleteModalOpen"
     [teacherName]="selectedTeacher?.name + ' ' + selectedTeacher?.lastName" [teacherId]="teacherToDeleteId"

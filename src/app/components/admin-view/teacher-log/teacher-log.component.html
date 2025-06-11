@@ -12,7 +12,7 @@
           <option selected>Categoría...</option>
           <option value="creado">Creación</option>
           <option value="eliminado">Eliminación</option>
-          <option value="escrito">Escritura</option>
+          <option value="escrito">Reseña</option>
           <option value="actualizado">Actualización</option>
         </select>
       </div>
@@ -80,7 +80,7 @@
                 } @else if (log.message.toLowerCase().includes('eliminado')) {
                 <span class="badge bg-danger">Eliminación</span>
                 } @else if (log.message.toLowerCase().includes('escrito')) {
-                <span class="badge bg-info">Escritura</span>
+                <span class="badge bg-info">Reseña</span>
                 } @else if (log.message.toLowerCase().includes('actualizado')) {
                 <span class="badge bg-warning">Actualización</span>
                 } @else {
@@ -99,7 +99,9 @@
           </tbody>
         </table>
       </div>
-    </div>
+    </div> 
+
+
     <div class="card-footer bg-white py-3">
       <nav>
         <ul class="pagination justify-content-end mb-0">
@@ -121,5 +123,6 @@
         </ul>
       </nav>
     </div>
+    
   </div>
 </div>

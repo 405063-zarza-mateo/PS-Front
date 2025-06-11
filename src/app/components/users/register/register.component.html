@@ -44,7 +44,7 @@
                 </div>
               </div>
             </div>
-            
+
             <label for="email" class="form-label">Correo electrónico</label>
             <div class="row">
               <div class=" col-md-6 mb-3">
@@ -64,6 +64,7 @@
 
                 <select class="form-select py-1" formControlName="course" id="course" style="height: 4vh;">
                   <option selected>Curso</option>
+                  <option value="Tercer_anio">Tercer año </option>
                   <option value="Cuarto_anio">Cuarto año </option>
                   <option value="Quinto_anio">Quinto año </option>
                   <option value="Sexto_anio">Sexto año </option>
@@ -105,27 +106,21 @@
             </div>
 
 
-            <!-- POR SI LO PIDEN -->
 
 
 
-            <!--           <div class="mb-4">
-                <div class="form-check">
-                  <input 
-                    class="form-check-input" 
-                    type="checkbox" 
-                    formControlName="termsAccepted"
-                    id="termsAccepted"
-                    [class.is-invalid]="registerForm.get('termsAccepted')?.invalid && registerForm.get('termsAccepted')?.touched"
-                  >
-                  <label class="form-check-label" for="termsAccepted">
-                    Acepto los <a href="#" class="text-decoration-none">términos y condiciones</a>
-                  </label>
-                  <div class="invalid-feedback">
-                    Debe aceptar los términos y condiciones
-                  </div>
+            <div class="mb-4">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" formControlName="termsAccepted" id="termsAccepted"
+                  [class.is-invalid]="registerForm.get('termsAccepted')?.invalid && registerForm.get('termsAccepted')?.touched">
+                <label class="form-check-label" for="termsAccepted">
+                  Acepto los <a href="terms" class="text-decoration-none">términos y condiciones</a>
+                </label>
+                <div class="invalid-feedback">
+                  Debe aceptar los términos y condiciones
                 </div>
-              </div> -->
+              </div>
+            </div>
 
             <button type="submit" class="btn btn-primary w-100 py-2" [disabled]="registerForm.invalid || isSubmitting">
               @if (isSubmitting) {

@@ -1,22 +1,33 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ChartType, GoogleChartsModule } from 'angular-google-charts';
+
+export interface DateRange {
+  startDate: string;
+  endDate: string;
+}
 
 @Component({
   selector: 'app-subject-progress-chart',
   standalone: true,
-  imports: [CommonModule, GoogleChartsModule],
+  imports: [CommonModule, GoogleChartsModule, FormsModule],
   templateUrl: './subject-progress-chart.component.html',
   styleUrl: './subject-progress-chart.component.scss'
 })
 export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, OnInit {
   @Input() chartData: any[] = [];
+  @Input() subjects: string[] = ['Matematica', 'Escritura', 'Lectura', 'Disciplina'];
+  @Output() dateRangeChange = new EventEmitter<DateRange>();
   
   processedData: any[] = [];
   chartColumns: any[] = [];
   
+  // Filtros de fecha
+  startDate: string = '';
+  endDate: string = '';
+  
   chartType : ChartType = ChartType.AreaChart;
-  // Corregir error de duplicación de chartArea
   chartOptions: any = {
     title: 'Progreso de Rendimiento a Lo Largo del Tiempo',
     hAxis: {
@@ -32,20 +43,19 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
     legend: { position: 'bottom' },
     chartArea: {
       width: '85%',
-      height: '75%',
+      height: '65%',
       backgroundColor: 'transparent',
       left: '10%',
       right: '5%'
     },
     backgroundColor: 'transparent',
-    width: null,  // Será establecido dinámicamente
+    width: null,
     height: 300,
     explorer: {
       axis: 'horizontal',
       keepInBounds: true,
       maxZoomIn: 4.0
     },
-    // Desactivar las animaciones para evitar problemas de tamaño
     animation: {
       startup: true,
       duration: 500,
@@ -59,7 +69,7 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
   constructor(private elementRef: ElementRef) {}
   
   ngOnInit(): void {
-    // Asegura que haya datos procesados incluso antes de ngOnChanges
+    this.setDefaultDateRange();
     if (this.chartData && this.chartData.length > 0) {
       this.processChartData();
     }
@@ -72,26 +82,43 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
   }
   
   ngAfterViewInit(): void {
-    // Configurar el observador de redimensionamiento para actualizar el gráfico
     this.setupResizeObserver();
-    
-    // Forzar un redimensionamiento inicial después de un breve retraso
-    // para dar tiempo al DOM a renderizarse completamente
     setTimeout(() => this.updateChartSize(), 300);
   }
   
+  public setDefaultDateRange(): void {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+    
+    if (currentMonth <= 6) {
+      // Primer semestre: enero a junio
+      this.startDate = `${currentYear}-01-01`;
+      this.endDate = `${currentYear}-06-30`;
+    } else {
+      // Segundo semestre: julio a diciembre
+      this.startDate = `${currentYear}-07-01`;
+      this.endDate = `${currentYear}-12-31`;
+    }
+  }
+  
+  onDateRangeChange(): void {
+    this.processChartData();
+    this.dateRangeChange.emit({ 
+      startDate: this.startDate, 
+      endDate: this.endDate 
+    });
+  }
+  
   private setupResizeObserver(): void {
-    // Limpiar observador anterior si existe
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
     
-    // Crear nuevo observador
     this.resizeObserver = new ResizeObserver(() => {
       this.updateChartSize();
     });
     
-    // Observar el contenedor del gráfico
     const chartContainer = this.elementRef.nativeElement.querySelector('.chart-container');
     if (chartContainer) {
       this.resizeObserver.observe(chartContainer);
@@ -101,14 +128,10 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
   private updateChartSize(): void {
     const chartContainer = this.elementRef.nativeElement.querySelector('.chart-container');
     if (chartContainer) {
-      // Obtener el ancho actual del contenedor
       const containerWidth = chartContainer.clientWidth;
-      
-      // Actualizar opciones del gráfico con las nuevas dimensiones
-      // No usamos width como string, sino como número
       this.chartOptions = {
         ...this.chartOptions,
-        width: containerWidth, // Usar número en lugar de string '100%'
+        width: containerWidth,
         height: this.height
       };
     }
@@ -117,30 +140,39 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
   processChartData(): void {
     if (!this.chartData || this.chartData.length === 0) {
       this.processedData = [];
+      this.chartColumns = [];
       return;
     }
     
-    // Crear encabezados para las columnas
+    // Filtrar datos por rango de fechas
+    const filteredData = this.filterDataByDateRange();
+    
+    if (filteredData.length === 0) {
+      this.processedData = [];
+      this.chartColumns = [];
+      return;
+    }
+    
+    // Determinar qué asignaturas están presentes en los datos actuales
+    // El primer elemento es la fecha, el resto son las asignaturas
+    const availableSubjectsCount = filteredData.length > 0 ? filteredData[0].length - 1 : 0;
+    
+    // Crear encabezados dinámicamente basados en los datos disponibles
     this.chartColumns = [];
     this.chartColumns.push({type: 'string', label: 'Fecha'});
     
-    // Determinar qué asignaturas están presentes en los datos
-    const subjects: string[] = [];
-    if (this.chartData.length > 0 && this.chartData[0].length > 1) {
-      for (let i = 1; i < this.chartData[0].length; i++) {
-        const subject = `Asignatura ${i}`;
-        subjects.push(subject);
-        this.chartColumns.push({type: 'number', label: subject});
-      }
+    // Solo agregar las columnas para las asignaturas que realmente tenemos datos
+    for (let i = 0; i < availableSubjectsCount; i++) {
+      const subjectName = i < this.subjects.length ? this.subjects[i] : `Asignatura ${i + 1}`;
+      this.chartColumns.push({type: 'number', label: subjectName});
     }
     
-    // Procesar los datos para asegurarnos de que todas las filas sean correctas
-    this.processedData = this.chartData.map(row => {
+    // Procesar los datos filtrados manteniendo la estructura original
+    this.processedData = filteredData.map(row => {
       const newRow = [row[0]]; // La fecha (como string)
       
-      // Añadir los valores numéricos para cada asignatura
+      // Añadir exactamente los valores que vienen en los datos
       for (let i = 1; i < row.length; i++) {
-        // Asegurarnos de que los valores son numéricos
         const value = row[i] !== null && row[i] !== undefined ? parseFloat(row[i].toString()) : 0;
         newRow.push(value);
       }
@@ -149,8 +181,25 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
     });
   }
   
+  private filterDataByDateRange(): any[] {
+    if (!this.startDate || !this.endDate) {
+      return this.chartData;
+    }
+    
+    const startDateObj = new Date(this.startDate);
+    const endDateObj = new Date(this.endDate);
+    
+    return this.chartData.filter(row => {
+      if (!row[0]) return false;
+      
+      // Convertir la fecha del formato mm/dd/yyyy a objeto Date
+      const rowDate = new Date(row[0]);
+      
+      return rowDate >= startDateObj && rowDate <= endDateObj;
+    });
+  }
+  
   ngOnDestroy(): void {
-    // Limpiar el observador al destruir el componente
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = null;

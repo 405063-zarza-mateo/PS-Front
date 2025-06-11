@@ -1,1 +1,200 @@
-<p>inventory-list works!</p>
+<div class="container py-4">
+  <h1 class="h3 mb-2 text-primary">Inventario</h1>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Buscar -->
+    <div class="d-flex gap-2">
+      <div class="input-group">
+        <span class="input-group-text bg-light py-1">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control py-1" style="height: 4vh;" placeholder="Buscar items..."
+          (input)="onSearch($event)" [value]="searchTerm">
+      </div>
+    </div>
+
+    <!-- Agregar -->
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary py-1" style="height: 4vh; width: 12vw;" (click)="openCreateModal()">
+        <i class="bi bi-plus-lg me-1"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div class="alert alert-danger mb-4" *ngIf="error">
+    {{ error }}
+    <button type="button" class="btn-close float-end" (click)="error = ''"></button>
+  </div>
+
+  <!-- Mensaje de éxito -->
+  @if (successMessage) {
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+  </div>
+  }
+
+  <!-- Indicador de carga -->
+  @if (isLoading) {
+  <div class="spinner-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2 text-muted">Cargando inventario...</p>
+  </div>
+  }
+
+  <div class="card border-0 shadow-sm" *ngIf="!isLoading">
+    <div class="card-body p-0">
+      <!-- Información de paginación -->
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of paginatedItems; track item.id) {
+            <tr>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="me-3">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center"
+                      style="width: 40px; height: 40px;">
+                      <i class="bi bi-box text-white"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="fw-medium">{{ item.name }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="text-truncate" style="max-width: 200px;" [title]="item.description">
+                  {{ item.description || 'Sin descripción' }}
+                </div>
+              </td>
+              <td>
+                <span class="fw-medium">{{ item.quantity || 0 }}</span>
+              </td>
+              <td>
+                @if (item.quantity && item.quantity > 0) {
+                <span class="badge bg-success">Disponible</span>
+                } @else {
+                <span class="badge bg-danger">Sin stock</span>
+                }
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="openEditModal(item.id)"
+                    title="Editar">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(item.id)"
+                    title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-4">
+                <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
+                <p class="mb-0">
+                  @if (searchTerm) {
+                  No se encontraron items que coincidan con "{{ searchTerm }}"
+                  } @else {
+                  No hay items en el inventario
+                  }
+                </p>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+      <small class="text-muted">
+        Mostrando {{ getStartItem() }} - {{ getEndItem() }} de {{ totalItems }} items
+      </small>
+
+      <div class=" bg-white " *ngIf="totalPages > 1">
+        <nav>
+          <ul class="pagination justify-content-center mb-0">
+            <!-- Botón Primera Página -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToFirstPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-double-left"></i>
+              </button>
+            </li>
+
+            <!-- Botón Página Anterior -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            </li>
+
+            <!-- Números de página -->
+            @for (page of getPageNumbers(); track page) {
+            <li class="page-item" [class.active]="page === currentPage">
+              <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            </li>
+            }
+
+            <!-- Botón Página Siguiente -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </li>
+
+            <!-- Botón Última Página -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link" (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+                <i class="bi bi-chevron-double-right"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Información adicional de paginación -->
+
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <label for="itemsPerPage" class="form-label mb-0 small">Items por página:</label>
+        <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;" [(ngModel)]="itemsPerPage"
+          (change)="currentPage = 1; applyFilters()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+
+    </div>
+
+
+  </div>
+
+  <!-- Modal de crear/editar item -->
+  <app-create-item [isOpen]="isFormModalOpen" [item]="selectedItem" [isEditMode]="isEditMode" (close)="closeFormModal()"
+    (saved)="onItemSaved()">
+  </app-create-item>
+
+  <!-- Modal de confirmación de eliminación -->
+  <app-delete-item [isOpen]="isDeleteModalOpen" [itemName]="selectedItem?.name || ''" [itemId]="itemToDeleteId"
+    (confirm)="confirmDelete($event)" (cancel)="closeDeleteModal()">
+  </app-delete-item>
+</div>

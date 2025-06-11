@@ -85,6 +85,7 @@
                 <i *ngIf="sortBy === 'lastName'" class="bi"
                   [ngClass]="sortDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up'"></i>
               </th>
+              <th scope="col">Sexo</th>
               <th scope="col" (click)="onSortChange('course')" style="cursor: pointer">
                 Curso
                 <i *ngIf="sortBy === 'course'" class="bi"
@@ -114,6 +115,7 @@
             <tr>
               <td>{{ student.name }}</td>
               <td>{{ student.lastName }}</td>
+              <td [ngClass]="getGenderClass(student.gender)">{{ student.gender.charAt(0) }}</td>
               <td> {{formatCourse(student.course)}}
               </td>
               <td>{{ student.assistance }}</td>
@@ -133,6 +135,7 @@
             <tr>
               <td>{{ student.name }}</td>
               <td>{{ student.lastName }}</td>
+              <td [ngClass]="getGenderClass(student.gender)">{{ student.gender.charAt(0) }}</td>
               <td> {{formatCourse(student.course)}}
               </td>
               <td>{{ student.assistance }}</td>
@@ -141,10 +144,9 @@
             }
             } @empty {
             <tr>
-              <td colspan="10" class="text-center py-4">
+              <td colspan="11" class="text-center py-4">
                 <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
                 <p class="mb-0">No hay estudiantes disponibles</p>
-              </td>
             </tr>
             }
           </tbody>

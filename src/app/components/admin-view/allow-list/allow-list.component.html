@@ -1,135 +1,251 @@
 <div class="container py-4">
-    <h1 class="h3 mb-2 text-primary">Listado de Profesores</h1>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <!-- Filtrar por curso -->
-      <div class="d-flex gap-2">
-        <div class="input-group">
-          <span class="input-group-text bg-light py-1">
-            <i class="bi bi-filter"></i>
-          </span>
-          <select class="form-select py-1" style="height: 4vh;" aria-label="Filtrar por curso..."
-            (change)="onCourseChange($event)" [value]="selectedCourse">
-            <option selected>Curso...</option>
-            <option value="Cuarto_anio">Cuarto año </option>
-            <option value="Quinto_anio">Quinto año </option>
-            <option value="Sexto_anio">Sexto año </option>
-            <option value="Universidad">Universidad </option>
+  <h1 class="h3 mb-2 text-primary">Solicitudes de Registro</h1>
   
-  
-          </select>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Filtrar por curso -->
+    <div class="d-flex gap-2">
+      <div class="input-group">
+        <span class="input-group-text bg-light py-1">
+          <i class="bi bi-filter"></i>
+        </span>
+        <select class="form-select py-1" style="height: 4vh;" aria-label="Filtrar por curso..."
+          (change)="onCourseChange($event)" [value]="selectedCourse">
+          <option selected>Curso...</option>
+          <option value="Tercer_anio">Tercer año </option>
+          <option value="Cuarto_anio">Cuarto año </option>
+          <option value="Quinto_anio">Quinto año </option>
+          <option value="Sexto_anio">Sexto año </option>
+          <option value="Universidad">Universidad </option>
+        </select>
+      </div>
+      <button *ngIf="selectedCourse !== 'Curso...'" class="btn btn-outline-secondary py-1" style="height: 4vh;"
+        (click)="resetCourseFilter()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="d-flex gap-2">
+      <div class="input-group">
+        <span class="input-group-text bg-light py-1">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control py-1" style="height: 4vh;" placeholder="Buscar..."
+          (input)="onSearch($event)" [value]="searchTerm">
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de confirmación -->
+  <div class="card border-0 shadow-sm mb-4" *ngIf="getPendingSelectionsCount() > 0">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="mb-1">
+            <i class="bi bi-clock-history text-warning me-2"></i>
+            Selecciones Pendientes
+          </h6>
+          <small class="text-muted">
+            {{ getSelectionStats().approved }} para aprobar, 
+            {{ getSelectionStats().denied }} para denegar
+          </small>
         </div>
-        <button *ngIf="selectedCourse !== 'Curso...'" class="btn btn-outline-secondary py-1" style="height: 4vh;"
-          (click)="resetCourseFilter()">
-          <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
-  
-      <div class="d-flex gap-2">
-        <div class="input-group">
-          <span class="input-group-text bg-light py-1">
-            <i class="bi bi-search"></i>
-          </span>
-          <input type="text" class="form-control py-1" style="height: 4vh;" placeholder="Buscar..."
-            (input)="onSearch($event)" [value]="searchTerm">
-        </div>
-      </div>
-    </div>
-  
-  
-    <!-- Mensaje de error -->
-    <div class="alert alert-danger mb-4" *ngIf="error">
-      {{ error }}
-      <button type="button" class="btn-close float-end" (click)="error = ''"></button>
-    </div>
-  
-    @if (successMessage) {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      {{ successMessage }}
-      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
-    </div>
-    }
-  
-    <!-- Indicador de carga -->
-    @if (isLoading) {
-    <div class="spinner-container">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
-      </div>
-      <p class="mt-2 text-muted">Cargando...</p>
-    </div>
-    }
-  
-    <div class="card border-0 shadow-sm" *ngIf="!isLoading">
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="bg-light">
-              <tr>
-                <th scope="col">Nombre Completo</th>
-                <th scope="col">Email</th>
-                <th scope="col">Curso</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (teacher of filteredTeachers; track teacher.id) {
-              <tr>
-                <td>
-                  <div class="d-flex align-items-center">
-                    <div>{{ teacher.name }} {{ teacher.lastName }}</div>
-                  </div>
-                </td>
-                <td>
-                    <div class="d-flex align-items-center">
-                      <div>{{ teacher.user.email }}</div>
-                    </div>
-                  </td>
-                <td>
-                  @if (teacher.course.includes("_") && teacher.course.includes("anio")) {
-                  {{ teacher.course.slice(0, teacher.course.indexOf("_")) }} año
-                  }
-                  @else {
-                  {{ teacher.course }}
-                  }
-                </td>
-                <td>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline-success" (click)="acceptRequest(teacher.id)">
-                      <i class="bi bi-check-lg"></i>
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="denyRequest(teacher.id)">
-                      <i class="bi bi-dash-circle"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              } @empty {
-              <tr>
-                <td colspan="7" class="text-center py-4">
-                  <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
-                  <p class="mb-0">No hay solicitudes pendientes</p>
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
+        <div class="btn-group">
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary btn-sm" 
+            (click)="clearAllSelections()"
+            [disabled]="isProcessing">
+            <i class="bi bi-x-circle me-1"></i>
+            Limpiar Todo
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-primary btn-sm ms-2" 
+            (click)="confirmSelections()"
+            [disabled]="isProcessing">
+            <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!isProcessing" class="bi bi-check-circle me-1"></i>
+            {{ isProcessing ? 'Procesando...' : 'Confirmar Selecciones' }}
+          </button>
         </div>
       </div>
-      <div class="card-footer bg-white py-3">
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div class="alert alert-danger mb-4" *ngIf="error">
+    {{ error }}
+    <button type="button" class="btn-close float-end" (click)="error = ''"></button>
+  </div>
+
+  @if (successMessage) {
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+  </div>
+  }
+
+  <!-- Indicador de carga -->
+  @if (isLoading) {
+  <div class="spinner-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2 text-muted">Cargando...</p>
+  </div>
+  }
+
+  <div class="card border-0 shadow-sm" *ngIf="!isLoading">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th scope="col">Nombre Completo</th>
+              <th scope="col">Email</th>
+              <th scope="col">Curso</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (teacher of filteredTeachers; track teacher.id) {
+            <tr [class]="getSelectionStatus(teacher.id) === 'approved' ? 'table-success' : 
+                        getSelectionStatus(teacher.id) === 'denied' ? 'table-danger' : ''">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div>{{ teacher.name }} {{ teacher.lastName }}</div>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div>{{ teacher.user.email }}</div>
+                </div>
+              </td>
+              <td>
+                @if (teacher.course.includes("_") && teacher.course.includes("anio")) {
+                {{ teacher.course.slice(0, teacher.course.indexOf("_")) }} año
+                }
+                @else {
+                {{ teacher.course }}
+                }
+              </td>
+              <td>
+                @if (getSelectionStatus(teacher.id) === 'approved') {
+                  <span class="badge bg-success">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Para Aprobar
+                  </span>
+                }
+                @else if (getSelectionStatus(teacher.id) === 'denied') {
+                  <span class="badge bg-danger">
+                    <i class="bi bi-x-circle me-1"></i>
+                    Para Denegar
+                  </span>
+                }
+                @else {
+                  <span class="badge bg-secondary">
+                    <i class="bi bi-clock me-1"></i>
+                    Pendiente
+                  </span>
+                }
+              </td>
+              <td>
+                <div class="btn-group">
+                  <!-- Botón Aprobar -->
+                  <button 
+                    type="button" 
+                    class="btn btn-sm"
+                    [class]="getSelectionStatus(teacher.id) === 'approved' ? 'btn-success' : 'btn-outline-success'"
+                    (click)="getSelectionStatus(teacher.id) === 'approved' ? clearSelection(teacher.id) : selectForApproval(teacher.id)"
+                    [disabled]="isProcessing">
+                    <i class="bi bi-check-lg"></i>
+                  </button>
+                  
+                  <!-- Botón Denegar -->
+                  <button 
+                    type="button" 
+                    class="btn btn-sm"
+                    [class]="getSelectionStatus(teacher.id) === 'denied' ? 'btn-danger' : 'btn-outline-danger'"
+                    (click)="getSelectionStatus(teacher.id) === 'denied' ? clearSelection(teacher.id) : selectForDenial(teacher.id)"
+                    [disabled]="isProcessing">
+                    <i class="bi bi-dash-circle"></i>
+                  </button>
+                  
+         
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-4">
+                <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
+                <p class="mb-0">No hay solicitudes pendientes</p>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+      <small class="text-muted">
+        Mostrando {{ getStartItem() }} - {{ getEndItem() }} de {{ totalItems }} items
+      </small>
+
+      <div class=" bg-white " *ngIf="totalPages > 1">
         <nav>
-          <ul class="pagination justify-content-end mb-0">
-            <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1"><i class="bi bi-chevron-left"></i></a>
+          <ul class="pagination justify-content-center mb-0">
+            <!-- Botón Primera Página -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToFirstPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-double-left"></i>
+              </button>
             </li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>
+
+            <!-- Botón Página Anterior -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            </li>
+
+            <!-- Números de página -->
+            @for (page of getPageNumbers(); track page) {
+            <li class="page-item" [class.active]="page === currentPage">
+              <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            </li>
+            }
+
+            <!-- Botón Página Siguiente -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </li>
+
+            <!-- Botón Última Página -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link" (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+                <i class="bi bi-chevron-double-right"></i>
+              </button>
             </li>
           </ul>
         </nav>
       </div>
+      
+      <div class="d-flex align-items-center gap-2">
+        <label for="itemsPerPage" class="form-label mb-0 small">Items por página:</label>
+        <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;" [(ngModel)]="itemsPerPage"
+          (change)="currentPage = 1; applyFilters()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
     </div>
-  
   </div>
+</div>

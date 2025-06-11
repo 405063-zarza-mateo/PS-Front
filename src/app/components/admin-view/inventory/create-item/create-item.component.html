@@ -1,0 +1,82 @@
+<div class="modal-backdrop fade show" *ngIf="isOpen"></div>
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="isOpen">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-dark-blue text-white">
+        <h5 class="modal-title">
+          {{ isEditMode ? 'Editar Item' : 'Crear Nuevo Item' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="onCancel()"></button>
+      </div>
+      
+      <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <!-- Mensaje de error -->
+          <div class="alert alert-danger" *ngIf="error">
+            {{ error }}
+          </div>
+
+          <div class="row">
+            <!-- Nombre -->
+            <div class="col-md-6 mb-3">
+              <label for="name" class="form-label">Nombre <span class="text-danger">*</span></label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="name"
+                formControlName="name"
+                [class.is-invalid]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched"
+                placeholder="Ingrese el nombre del item">
+              <div class="invalid-feedback">
+                {{ getFieldError('name') }}
+              </div>
+            </div>
+
+    
+          </div>
+
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label for="description" class="form-label">Descripción</label>
+            <textarea 
+              class="form-control" 
+              id="description"
+              formControlName="description"
+              rows="3"
+              placeholder="Ingrese una descripción del item"></textarea>
+          </div>
+
+          <div class="row">
+            <!-- Cantidad -->
+            <div class="col-md-6 mb-3">
+              <label for="quantity" class="form-label">Cantidad <span class="text-danger">*</span></label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="quantity"
+                formControlName="quantity"
+                [class.is-invalid]="itemForm.get('quantity')?.invalid && itemForm.get('quantity')?.touched"
+                min="0"
+                placeholder="0">
+              <div class="invalid-feedback">
+                {{ getFieldError('quantity') }}
+              </div>
+            </div>
+
+     
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isLoading">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading || itemForm.invalid">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+            {{ isEditMode ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
