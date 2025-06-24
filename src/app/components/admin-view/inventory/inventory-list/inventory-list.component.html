@@ -77,9 +77,16 @@
                 </div>
               </td>
               <td>
-                <div class="text-truncate" style="max-width: 200px;" [title]="item.description">
-                  {{ item.description || 'Sin descripción' }}
+                @if (item.description && item.description != "" ) { <div class="text-truncate" style="max-width: 200px;"
+                  [title]="item.description">
+                  {{ item.description }}
                 </div>
+                }
+                @else {
+                <div class="text-truncate text-muted" style="max-width: 200px;" [title]="item.description">
+                  (Sin descripción)
+                </div>
+                }
               </td>
               <td>
                 <span class="fw-medium">{{ item.quantity || 0 }}</span>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth-service.service';
 
 interface FAQ {
   id: number;
@@ -18,8 +19,9 @@ interface FAQ {
 })
 export class FaqComponent {
 
-selectedCategory: string = 'all';
-  
+  selectedCategory: string = 'all';
+  isAdmin: boolean = false;
+
   // Aquí puedes agregar/editar fácilmente las preguntas frecuentes
   faqs: FAQ[] = [
     // Categoría: General
@@ -144,10 +146,13 @@ selectedCategory: string = 'all';
       isOpen: false
     },
 
- 
+
   ];
 
-  constructor() { }
+  constructor(private authService: AuthService) {
+    this.isAdmin = authService.isAdmin;
+
+  }
 
   // Obtener categorías únicas para el filtro
   get categories() {
@@ -199,10 +204,10 @@ selectedCategory: string = 'all';
     if (!searchTerm.trim()) {
       return this.filteredFaqs;
     }
-    
+
     const term = searchTerm.toLowerCase();
-    return this.filteredFaqs.filter(faq => 
-      faq.question.toLowerCase().includes(term) || 
+    return this.filteredFaqs.filter(faq =>
+      faq.question.toLowerCase().includes(term) ||
       faq.answer.toLowerCase().includes(term)
     );
   }

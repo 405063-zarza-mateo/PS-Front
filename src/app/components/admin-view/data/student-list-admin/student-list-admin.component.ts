@@ -30,8 +30,8 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
   // Filter properties
   searchTerm = '';
   selectedCourse = '';
-  sortBy = 'date';
-  sortDirection = 'desc';
+  sortBy = 'default';
+  sortDirection = 'asc';
 
   // Pagination
   currentPage = 1;
@@ -86,74 +86,76 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
       });
   }
 
-  applyFilters(): void {
-    let filtered = [...this.students];
+applyFilters(): void {
+  let filtered = [...this.students];
 
-    // Apply search filter
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(student => {
-        const studentMatch = student.name.toLowerCase().includes(term) ||
-          student.lastName.toLowerCase().includes(term);
+  // Apply search filter
+  if (this.searchTerm) {
+    const term = this.searchTerm.toLowerCase();
+    filtered = filtered.filter(student => {
+      const studentMatch = student.name.toLowerCase().includes(term) ||
+        student.lastName.toLowerCase().includes(term);
 
-        const teacherMatch = student.reviews?.some(review => {
-          const teacherFullName = `${review.teacher.name} ${review.teacher.lastName}`.toLowerCase();
-          return teacherFullName.includes(term) ||
-            review.teacher.name.toLowerCase().includes(term) ||
-            review.teacher.lastName.toLowerCase().includes(term);
-        });
-
-        return studentMatch || teacherMatch;
+      const teacherMatch = student.reviews?.some(review => {
+        const teacherFullName = `${review.teacher.name} ${review.teacher.lastName}`.toLowerCase();
+        return teacherFullName.includes(term) ||
+          review.teacher.name.toLowerCase().includes(term) ||
+          review.teacher.lastName.toLowerCase().includes(term);
       });
-    }
 
-    // Apply course filter
-    if (this.selectedCourse) {
-      filtered = filtered.filter(student =>
-        student.course === this.selectedCourse
-      );
-    }
-
-    // Apply sorting
-    filtered.sort((a, b) => {
-      const dirMod = this.sortDirection === 'asc' ? 1 : -1;
-
-      switch (this.sortBy) {
-        case 'name':
-          return (a.name.localeCompare(b.name)) * dirMod;
-        case 'lastName':
-          return (a.lastName.localeCompare(b.lastName)) * dirMod;
-        case 'course':
-          return (a.course.localeCompare(b.course)) * dirMod;
-        case 'assistance':
-          return (a.assistance - b.assistance) * dirMod;
-        case 'date':
-          // Sort by latest review date
-          const aLatest = a.reviews.length ? new Date(a.reviews[a.reviews.length - 1].date).getTime() : 0;
-          const bLatest = b.reviews.length ? new Date(b.reviews[b.reviews.length - 1].date).getTime() : 0;
-          return (aLatest - bLatest) * dirMod;
-        default:
-          // Ordenamiento por defecto: curso, luego alfabéticamente
-          const courseOrder = this.courses.indexOf(a.course) - this.courses.indexOf(b.course);
-          if (courseOrder !== 0) return courseOrder;
-
-          const lastNameOrder = a.lastName.localeCompare(b.lastName);
-          if (lastNameOrder !== 0) return lastNameOrder;
-
-          return a.name.localeCompare(b.name);
-      }
+      return studentMatch || teacherMatch;
     });
-
-    this.filteredStudents = filtered;
-    this.totalItems = filtered.length;
-
-    // Reset to first page if no results on current page
-    if (this.currentPage > this.totalPages && this.totalPages > 0) {
-      this.currentPage = 1;
-    }
   }
 
+  // Apply course filter
+  if (this.selectedCourse) {
+    filtered = filtered.filter(student =>
+      student.course === this.selectedCourse
+    );
+  }
 
+  // Apply sorting
+  filtered.sort((a, b) => {
+    const dirMod = this.sortDirection === 'asc' ? 1 : -1;
+
+    switch (this.sortBy) {
+      case 'name':
+        return (a.name.localeCompare(b.name)) * dirMod;
+      case 'lastName':
+        return (a.lastName.localeCompare(b.lastName)) * dirMod;
+      case 'course':
+        return (a.course.localeCompare(b.course)) * dirMod;
+      case 'assistance':
+        return (a.assistance - b.assistance) * dirMod;
+      case 'date':
+        // Sort by latest review date
+        const aLatest = a.reviews.length ? new Date(a.reviews[a.reviews.length - 1].date).getTime() : 0;
+        const bLatest = b.reviews.length ? new Date(b.reviews[b.reviews.length - 1].date).getTime() : 0;
+        return (aLatest - bLatest) * dirMod;
+      case 'default':
+      default:
+        // Ordenamiento por defecto: curso, luego por nombre, luego por fecha de reseña más reciente
+        const courseOrder = this.courses.indexOf(a.course) - this.courses.indexOf(b.course);
+        if (courseOrder !== 0) return courseOrder;
+
+        const nameOrder = a.name.localeCompare(b.name);
+        if (nameOrder !== 0) return nameOrder;
+
+        // Comparar por fecha de reseña más reciente (más reciente primero)
+        const aLatestDate = a.reviews.length ? new Date(a.reviews[a.reviews.length - 1].date).getTime() : 0;
+        const bLatestDate = b.reviews.length ? new Date(b.reviews[b.reviews.length - 1].date).getTime() : 0;
+        return bLatestDate - aLatestDate; // Más reciente primero (orden descendente)
+    }
+  });
+
+  this.filteredStudents = filtered;
+  this.totalItems = filtered.length;
+
+  // Reset to first page if no results on current page
+  if (this.currentPage > this.totalPages && this.totalPages > 0) {
+    this.currentPage = 1;
+  }
+}
 
   onSearch(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value;
