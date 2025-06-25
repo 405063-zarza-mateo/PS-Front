@@ -38,9 +38,7 @@
                                 {{ date.toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
                             </option>
                         </select>
-                        <div class="form-text text-muted">
-                            Solo se permiten martes y sábados de la semana actual y anterior
-                        </div>
+                   
                         <div class="invalid-feedback">
                             @if (f['date'].hasError('required')) {
                                 La fecha es obligatoria

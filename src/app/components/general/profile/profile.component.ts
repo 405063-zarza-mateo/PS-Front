@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth-service.service';
 import { ProfileDto } from '../../../models/profileDto';
 import { ProfileService } from '../../../services/profile.service';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -12,13 +13,15 @@ import { CommonModule } from '@angular/common';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnDestroy{
   profileForm: FormGroup;
   passwordForm: FormGroup;
   userProfile: ProfileDto | null = null;
   isEditing = false;
   successMessage = '';
   errorMessage = '';
+
+  subscription : Subscription[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -41,12 +44,17 @@ export class ProfileComponent {
     });
   }
 
+
+    ngOnDestroy(): void {
+    this.subscription.forEach(sub => sub.unsubscribe());
+ }
+
   ngOnInit(): void {
     this.loadUserProfile();
   }
 
   loadUserProfile(): void {
-    this.profileService.getUserProfile().subscribe({
+  const aux =  this.profileService.getUserProfile().subscribe({
       next: (profile) => {
         this.userProfile = profile;
 
@@ -62,6 +70,8 @@ export class ProfileComponent {
         console.error(err);
       }
     });
+
+    this.subscription.push(aux)
   }
 
   toggleEdit(): void {
@@ -83,7 +93,7 @@ export class ProfileComponent {
   updateProfile(): void {
     const course: string = this.profileForm.get('course')?.value;
 
-    this.profileService.updateProfile(course).subscribe({
+  const aux =  this.profileService.updateProfile(course).subscribe({
       next: (response) => {
         this.successMessage = 'Perfil actualizado correctamente';
         this.errorMessage = '';
@@ -100,6 +110,7 @@ export class ProfileComponent {
       }
     });
 
+    this.subscription.push(aux)
   }
 
   changePassword(): void {
@@ -109,7 +120,7 @@ export class ProfileComponent {
         newPassword: this.passwordForm.get('newPassword')?.value
       };
 
-      this.profileService.changePassword(passwordData).subscribe({
+    const aux =  this.profileService.changePassword(passwordData).subscribe({
         next: () => {
           this.successMessage = 'Contraseña actualizada correctamente';
           this.errorMessage = '';
@@ -121,7 +132,9 @@ export class ProfileComponent {
           console.error(err);
         }
       });
+      this.subscription.push(aux)
     }
+
   }
 
   mustMatch(controlName: string, matchingControlName: string): ValidatorFn {

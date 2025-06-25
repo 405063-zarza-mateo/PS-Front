@@ -4,29 +4,26 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/evironment';
 import { ProfileDto } from '../models/profileDto';
 
-
 interface PasswordChangeData {
   currentPassword: string;
   newPassword: string;
 }
-
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getUserProfile(): Observable<ProfileDto> {
     return this.http.get<ProfileDto>(`${this.apiUrl}/teacher/profile`);
   }
 
-  updateProfile(data: string): Observable<ProfileDto> {
-    return this.http.put<ProfileDto>(`${this.apiUrl}/teacher/profile`, data);
+  updateProfile(course: string): Observable<ProfileDto> {
+    return this.http.put<ProfileDto>(`${this.apiUrl}/teacher/profile`, { curso: course });
   }
 
-  changePassword(data: PasswordChangeData): Observable<any> {
+   changePassword(data: PasswordChangeData): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/change-password`, data);
   }}
