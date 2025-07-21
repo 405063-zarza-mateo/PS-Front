@@ -1,0 +1,132 @@
+
+// Mejoras para dispositivos móviles
+@media (max-width: 767.98px) {
+  // Reducir padding del container en móviles
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  // Ajustar título en móviles
+  .h4 {
+    font-size: 1.5rem;
+  }
+  
+  // Hacer las tarjetas más compactas en móviles
+  .card {
+    border-radius: 0.5rem;
+    
+    .card-body {
+      padding: 0.75rem;
+    }
+  }
+  
+  
+  // Mejorar el dropdown en móviles
+  .dropdown-toggle {
+    padding: 0.25rem 0.5rem;
+    
+    &::after {
+      display: none;
+    }
+  }
+  
+  .dropdown-menu {
+    min-width: 160px;
+    font-size: 0.9rem;
+    
+    .dropdown-item {
+      padding: 0.5rem 1rem;
+      
+      i {
+        width: 16px;
+      }
+    }
+  }
+  
+  // Ajustar la paginación en móviles
+  .pagination {
+    .page-link {
+      padding: 0.375rem 0.5rem;
+      font-size: 0.875rem;
+    }
+  }
+  
+  // Ajustar form controls en móviles
+  .form-control,
+  .form-select {
+    font-size: 0.9rem;
+  }
+  
+  // Botones más touch-friendly
+  .btn {
+    min-height: 36px;
+    
+    &.btn-sm {
+      min-height: 32px;
+    }
+  }
+}
+
+// Mejoras para tablets
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .container-fluid {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+// Animaciones suaves para las transiciones
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+// Mejoras de accesibilidad
+.btn {
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+}
+
+// Loading spinner centrado
+.text-center {
+  .spinner-border {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+// Mejoras para alertas en móviles
+@media (max-width: 575.98px) {
+  .alert {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+    
+    .btn-close {
+      padding: 0.375rem;
+    }
+  }
+}
+
+// Estilos para el estado vacío
+.text-center {
+  .bi-inbox {
+    opacity: 0.5;
+  }
+}
+
+// Mejoras para input groups
+.input-group {
+  .input-group-text {
+    border-color: #ced4da;
+    
+    i {
+      font-size: 0.875rem;
+    }
+  }
+}

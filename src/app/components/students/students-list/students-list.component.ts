@@ -27,13 +27,13 @@ import { NewReviewComponent } from '../new-review/new-review.component';
 export class StudentsListComponent implements OnInit, OnDestroy {
   students: Student[] = [];
   filteredStudents: Student[] = [];
-    paginatedStudents: Student[] = [];
-  
+  paginatedStudents: Student[] = [];
+
   isAdmin = false;
   isLoading = true;
   searchTerm = '';
   error = '';
-  selectedCourse = 'Curso...'; 
+  selectedCourse = 'Curso...';
 
   isDeleteModalOpen = false;
   isDetailsModalOpen = false;
@@ -45,7 +45,7 @@ export class StudentsListComponent implements OnInit, OnDestroy {
   successMessage = '';
   courses: String[] = [];
 
-    // Propiedades de paginación
+  // Propiedades de paginación
   currentPage = 1;
   itemsPerPage = 10;
   totalItems = 0;
@@ -72,22 +72,22 @@ export class StudentsListComponent implements OnInit, OnDestroy {
   }
 
   private sortStudents(students: Student[]): Student[] {
-  return students.sort((a, b) => {
-    // Primero ordenar por el orden de los cursos
-    const courseIndexA = this.courses.indexOf(a.course);
-    const courseIndexB = this.courses.indexOf(b.course);
-    
-    if (courseIndexA !== courseIndexB) {
-      return courseIndexA - courseIndexB;
-    }
-    
-    // Si tienen el mismo curso, ordenar alfabéticamente por nombre completo
-    const fullNameA = `${a.name} ${a.lastName}`.toLowerCase();
-    const fullNameB = `${b.name} ${b.lastName}`.toLowerCase();
-    
-    return fullNameA.localeCompare(fullNameB);
-  });
-}
+    return students.sort((a, b) => {
+      // Primero ordenar por el orden de los cursos
+      const courseIndexA = this.courses.indexOf(a.course);
+      const courseIndexB = this.courses.indexOf(b.course);
+
+      if (courseIndexA !== courseIndexB) {
+        return courseIndexA - courseIndexB;
+      }
+
+      // Si tienen el mismo curso, ordenar alfabéticamente por nombre completo
+      const fullNameA = `${a.name} ${a.lastName}`.toLowerCase();
+      const fullNameB = `${b.name} ${b.lastName}`.toLowerCase();
+
+      return fullNameA.localeCompare(fullNameB);
+    });
+  }
 
   loadStudents(): void {
     this.isLoading = true;
@@ -95,7 +95,7 @@ export class StudentsListComponent implements OnInit, OnDestroy {
     const subscription = this.studentService.getStudents().subscribe({
       next: (data) => {
         this.students = this.sortStudents(data);
-        this.applyFilters(); 
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (err) => {
@@ -110,46 +110,46 @@ export class StudentsListComponent implements OnInit, OnDestroy {
 
   // Agregar este método en la clase StudentsListComponent, después del método resetCourseFilter():
 
-applyFilters(): void {
-  let result = [...this.students];
-  
-  if (this.searchTerm.trim()) {
-    const term = this.searchTerm.toLowerCase().trim();
-    result = result.filter(student =>
-      student.name.toLowerCase().includes(term) ||
-      student.lastName.toLowerCase().includes(term) ||
-      student.gender.toLowerCase().includes(term) ||
-      student.course.toLowerCase().includes(term)
-    );
-  }
-  
-  if (this.selectedCourse && this.selectedCourse !== 'Curso...') {
-    result = result.filter(student => student.course === this.selectedCourse);
-  }
-  
-  // Mantener el ordenamiento después de aplicar filtros
-  this.filteredStudents = this.sortStudents(result);
-  this.updatePagination();
-}
+  applyFilters(): void {
+    let result = [...this.students];
 
-// Modificar el método onSearch para resetear a la primera página:
-onSearch(event: Event): void {
-  const target = event.target as HTMLInputElement;
-  this.searchTerm = target.value;
-  this.currentPage = 1; // Agregar esta línea
-  this.applyFilters();
-}
+    if (this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase().trim();
+      result = result.filter(student =>
+        student.name.toLowerCase().includes(term) ||
+        student.lastName.toLowerCase().includes(term) ||
+        student.gender.toLowerCase().includes(term) ||
+        student.course.toLowerCase().includes(term)
+      );
+    }
 
-// Modificar el método onCourseChange para resetear a la primera página:
-onCourseChange(event: Event): void {
-  const target = event.target as HTMLSelectElement;
-  this.selectedCourse = target.value;
-  this.currentPage = 1; // Agregar esta línea
-  this.applyFilters();
-}
+    if (this.selectedCourse && this.selectedCourse !== 'Curso...') {
+      result = result.filter(student => student.course === this.selectedCourse);
+    }
+
+    // Mantener el ordenamiento después de aplicar filtros
+    this.filteredStudents = this.sortStudents(result);
+    this.updatePagination();
+  }
+
+  // Modificar el método onSearch para resetear a la primera página:
+  onSearch(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchTerm = target.value;
+    this.currentPage = 1; // Agregar esta línea
+    this.applyFilters();
+  }
+
+  // Modificar el método onCourseChange para resetear a la primera página:
+  onCourseChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.selectedCourse = target.value;
+    this.currentPage = 1; // Agregar esta línea
+    this.applyFilters();
+  }
 
   searchStudents(): void {
-    this.applyFilters(); 
+    this.applyFilters();
   }
 
   openDetailsModal(id: number): void {
@@ -206,7 +206,7 @@ onCourseChange(event: Event): void {
     const subscription = this.studentService.deleteStudent(id).subscribe({
       next: () => {
         this.students = this.students.filter(student => student.id !== id);
-        this.applyFilters(); 
+        this.applyFilters();
         this.closeDeleteModal();
         this.successMessage = 'Alumno eliminado con éxito.';
       },
@@ -269,11 +269,11 @@ onCourseChange(event: Event): void {
       this.isReviewModalOpen = true;
     }
   }
-  
+
   onCloseAddReviewModal(): void {
     this.isReviewModalOpen = false;
   }
-  
+
   onReviewCreated(): void {
     this.loadStudents();
     this.successMessage = 'Reseña añadida exitosamente';
@@ -284,7 +284,7 @@ onCourseChange(event: Event): void {
     this.applyFilters();
   }
 
-   // Métodos para usar en el template
+  // Métodos para usar en el template
   getStartItem(): number {
     return (this.currentPage - 1) * this.itemsPerPage + 1;
   }
@@ -293,15 +293,15 @@ onCourseChange(event: Event): void {
     return Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
   }
 
-    updatePagination(): void {
+  updatePagination(): void {
     this.totalItems = this.filteredStudents.length;
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-    
+
     // Ajustar página actual si es necesario
     if (this.currentPage > this.totalPages) {
       this.currentPage = Math.max(1, this.totalPages);
     }
-    
+
     // Calcular items para la página actual
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
@@ -336,7 +336,7 @@ onCourseChange(event: Event): void {
   getPageNumbers(): number[] {
     const pages: number[] = [];
     const maxVisiblePages = 5;
-    
+
     if (this.totalPages <= maxVisiblePages) {
       // Si hay pocas páginas, mostrar todas
       for (let i = 1; i <= this.totalPages; i++) {
@@ -346,13 +346,22 @@ onCourseChange(event: Event): void {
       // Lógica para mostrar páginas con puntos suspensivos
       const startPage = Math.max(1, this.currentPage - 2);
       const endPage = Math.min(this.totalPages, this.currentPage + 2);
-      
+
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
     }
-    
+
     return pages;
+  }
+  formatCourseName(course: String): string {
+    if (!course) return '';
+
+    return course
+      .toLowerCase()
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
 }

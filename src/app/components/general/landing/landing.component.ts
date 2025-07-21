@@ -22,6 +22,7 @@ export class LandingComponent implements OnInit, OnDestroy {
   loading = true;
   error = false;
   isCreateModalOpen = false;
+  isLocationModalOpen = false; // Nueva propiedad para el modal de ubicación
 
   // Variables para el carrusel de noticias
   currentIndex = 0;
@@ -31,20 +32,15 @@ export class LandingComponent implements OnInit, OnDestroy {
   // Variable para edición de noticias
   selectedNews: News | null = null;
 
-
   isDeleteModalOpen = false;
-
   newsToDeleteId: number | null = null;
 
-
   private subscriptions: Subscription[] = [];
-
 
   constructor(
     private newsService: NewsService,
     public authService: AuthService
   ) { }
-
 
   ngOnInit(): void {
     this.loadNews();
@@ -91,8 +87,6 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.pageIndicators = Array(pageCount).fill(0).map((_, i) => i);
   }
 
-
-
   showNextNews(): void {
     if (this.currentIndex + this.itemsPerPage < this.news.length) {
       this.currentIndex += this.itemsPerPage;
@@ -118,21 +112,6 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.isCreateModalOpen = false;
     this.selectedNews = null;
   }
-
-/*   deleteNews(id: number): void {
-    if (confirm('¿Estás seguro de que deseas eliminar esta noticia?')) {
-      this.newsService.deleteNews(id).subscribe({
-        next: () => {
-          // Recargar las noticias después de eliminar
-          this.loadNews();
-        },
-        error: (err) => {
-          console.error('Error al eliminar la noticia', err);
-          alert('Error al eliminar la noticia');
-        }
-      });
-    }
-  } */
 
   editNews(id: number): void {
     // Buscar la noticia con el ID proporcionado
@@ -176,5 +155,14 @@ export class LandingComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.push(subscription);
+  }
+
+  // Nuevos métodos para el modal de ubicación
+  openLocationModal(): void {
+    this.isLocationModalOpen = true;
+  }
+
+  closeLocationModal(): void {
+    this.isLocationModalOpen = false;
   }
 }

@@ -9,7 +9,7 @@
         <span class="input-group-text bg-light py-1">
           <i class="bi bi-filter"></i>
         </span>
-        <select class="form-select py-1" style="height: 4vh;" aria-label="Filtrar por curso..."
+        <select class="form-select py-1" style="height: 5vh;" aria-label="Filtrar por curso..."
           (change)="onCourseChange($event)" [value]="selectedCourse">
           <option value="">Curso...</option>
           @for (course of courses; track course) {
@@ -23,12 +23,12 @@
         <span class="input-group-text bg-light py-1">
           <i class="bi bi-search"></i>
         </span>
-        <input type="text" class="form-control py-1" style="height: 4vh;" placeholder="Buscar por nombre..."
+        <input type="text" class="form-control py-1" style="height: 5vh;" placeholder="Buscar por nombre..."
           (input)="onSearch($event)" [value]="searchTerm">
       </div>
 
       <!-- Botón para limpiar filtros -->
-      <button *ngIf="searchTerm || selectedCourse" class="btn btn-outline-secondary py-1" style="height: 4vh;"
+      <button *ngIf="searchTerm || selectedCourse" class="btn btn-outline-secondary py-1" style="height: 5vh;"
         (click)="resetFilters()">
         <i class="bi bi-x-lg"></i>
       </button>

@@ -110,7 +110,7 @@ export class NewReviewComponent implements OnInit, OnDestroy {
     dates.push(tuesday);
 
     const friday = new Date(date);
-    tuesday.setDate(date.getDate() + 4);
+    friday.setDate(date.getDate() + 4);
     dates.push(friday);
 
     const saturday = new Date(date);

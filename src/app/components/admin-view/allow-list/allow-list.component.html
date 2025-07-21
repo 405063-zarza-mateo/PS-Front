@@ -1,35 +1,40 @@
 <div class="container py-4">
   <h1 class="h3 mb-2 text-primary">Solicitudes de Registro</h1>
   
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <!-- Filtrar por curso -->
-    <div class="d-flex gap-2">
+  <!-- Filtros y acciones - Layout responsive -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+    <!-- Filtros -->
+    <div class="d-flex gap-2 w-100 w-md-auto">
       <div class="input-group">
         <span class="input-group-text bg-light py-1">
           <i class="bi bi-filter"></i>
         </span>
-        <select class="form-select py-1" style="height: 4vh;" aria-label="Filtrar por curso..."
+        <select class="form-select py-1" style="height: 5vh;" aria-label="Filtrar por curso..."
           (change)="onCourseChange($event)" [value]="selectedCourse">
           <option selected>Curso...</option>
-          <option value="Tercer_anio">Tercer año </option>
-          <option value="Cuarto_anio">Cuarto año </option>
-          <option value="Quinto_anio">Quinto año </option>
-          <option value="Sexto_anio">Sexto año </option>
-          <option value="Universidad">Universidad </option>
+          <option value="Tercer_anio">Tercer año</option>
+          <option value="Cuarto_anio">Cuarto año</option>
+          <option value="Quinto_anio">Quinto año</option>
+          <option value="Sexto_anio">Sexto año</option>
+          <option value="Universidad">Universidad</option>
         </select>
       </div>
-      <button *ngIf="selectedCourse !== 'Curso...'" class="btn btn-outline-secondary py-1" style="height: 4vh;"
-        (click)="resetCourseFilter()">
+      <!-- Botón limpiar filtros -->
+      <button *ngIf="selectedCourse !== 'Curso...'" 
+              class="btn btn-outline-secondary py-1" 
+              style="height: 5vh;" 
+              (click)="resetCourseFilter()">
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
 
-    <div class="d-flex gap-2">
+    <!-- Buscar -->
+    <div class="d-flex gap-2 w-100 w-md-auto pe-3">
       <div class="input-group">
         <span class="input-group-text bg-light py-1">
           <i class="bi bi-search"></i>
         </span>
-        <input type="text" class="form-control py-1" style="height: 4vh;" placeholder="Buscar..."
+        <input type="text" class="form-control py-1" style="height: 5vh;" placeholder="Buscar..."
           (input)="onSearch($event)" [value]="searchTerm">
       </div>
     </div>
@@ -85,7 +90,6 @@
   </div>
   }
 
-  <!-- Indicador de carga -->
   @if (isLoading) {
   <div class="spinner-container">
     <div class="spinner-border text-primary" role="status">
@@ -95,139 +99,231 @@
   </div>
   }
 
-  <div class="card border-0 shadow-sm" *ngIf="!isLoading">
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="bg-light">
-            <tr>
-              <th scope="col">Nombre Completo</th>
-              <th scope="col">Email</th>
-              <th scope="col">Curso</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (teacher of filteredTeachers; track teacher.id) {
-            <tr [class]="getSelectionStatus(teacher.id) === 'approved' ? 'table-success' : 
-                        getSelectionStatus(teacher.id) === 'denied' ? 'table-danger' : ''">
-              <td>
-                <div class="d-flex align-items-center">
-                  <div>{{ teacher.name }} {{ teacher.lastName }}</div>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div>{{ teacher.user.email }}</div>
-                </div>
-              </td>
-              <td>
-                @if (teacher.course.includes("_") && teacher.course.includes("anio")) {
-                {{ teacher.course.slice(0, teacher.course.indexOf("_")) }} año
-                }
-                @else {
-                {{ teacher.course }}
-                }
-              </td>
-              <td>
-                @if (getSelectionStatus(teacher.id) === 'approved') {
-                  <span class="badge bg-success">
-                    <i class="bi bi-check-circle me-1"></i>
-                    Para Aprobar
-                  </span>
-                }
-                @else if (getSelectionStatus(teacher.id) === 'denied') {
-                  <span class="badge bg-danger">
-                    <i class="bi bi-x-circle me-1"></i>
-                    Para Denegar
-                  </span>
-                }
-                @else {
-                  <span class="badge bg-secondary">
-                    <i class="bi bi-clock me-1"></i>
-                    Pendiente
-                  </span>
-                }
-              </td>
-              <td>
-                <div class="btn-group">
-                  <!-- Botón Aprobar -->
-                  <button 
-                    type="button" 
-                    class="btn btn-sm"
-                    [class]="getSelectionStatus(teacher.id) === 'approved' ? 'btn-success' : 'btn-outline-success'"
-                    (click)="getSelectionStatus(teacher.id) === 'approved' ? clearSelection(teacher.id) : selectForApproval(teacher.id)"
-                    [disabled]="isProcessing">
-                    <i class="bi bi-check-lg"></i>
-                  </button>
-                  
-                  <!-- Botón Denegar -->
-                  <button 
-                    type="button" 
-                    class="btn btn-sm"
-                    [class]="getSelectionStatus(teacher.id) === 'denied' ? 'btn-danger' : 'btn-outline-danger'"
-                    (click)="getSelectionStatus(teacher.id) === 'denied' ? clearSelection(teacher.id) : selectForDenial(teacher.id)"
-                    [disabled]="isProcessing">
-                    <i class="bi bi-dash-circle"></i>
-                  </button>
-                  
-         
-                </div>
-              </td>
-            </tr>
-            } @empty {
-            <tr>
-              <td colspan="5" class="text-center py-4">
-                <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
-                <p class="mb-0">No hay solicitudes pendientes</p>
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
+  <div *ngIf="!isLoading">
+    
+    <!-- Vista de tabla para escritorio -->
+    <div class="card border-0 shadow-sm d-none d-md-block">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+              <tr>
+                <th scope="col">Nombre Completo</th>
+                <th scope="col">Email</th>
+                <th scope="col">Curso</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (teacher of filteredTeachers; track teacher.id) {
+              <tr [class]="getSelectionStatus(teacher.id) === 'approved' ? 'table-success' : 
+                          getSelectionStatus(teacher.id) === 'denied' ? 'table-danger' : ''">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div>{{ teacher.name }} {{ teacher.lastName }}</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div>{{ teacher.user.email }}</div>
+                  </div>
+                </td>
+                <td>
+                  @if (teacher.course.includes("_") && teacher.course.includes("anio")) {
+                  {{ teacher.course.slice(0, teacher.course.indexOf("_")) }} año
+                  }
+                  @else {
+                  {{ teacher.course }}
+                  }
+                </td>
+                <td>
+                  @if (getSelectionStatus(teacher.id) === 'approved') {
+                    <span class="badge bg-success">
+                      <i class="bi bi-check-circle me-1"></i>
+                      Para Aprobar
+                    </span>
+                  }
+                  @else if (getSelectionStatus(teacher.id) === 'denied') {
+                    <span class="badge bg-danger">
+                      <i class="bi bi-x-circle me-1"></i>
+                      Para Denegar
+                    </span>
+                  }
+                  @else {
+                    <span class="badge bg-secondary">
+                      <i class="bi bi-clock me-1"></i>
+                      Pendiente
+                    </span>
+                  }
+                </td>
+                <td>
+                  <div class="btn-group">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm"
+                      [class]="getSelectionStatus(teacher.id) === 'approved' ? 'btn-success' : 'btn-outline-success'"
+                      (click)="getSelectionStatus(teacher.id) === 'approved' ? clearSelection(teacher.id) : selectForApproval(teacher.id)"
+                      [disabled]="isProcessing"
+                      title="Aprobar">
+                      <i class="bi bi-check-lg"></i>
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm"
+                      [class]="getSelectionStatus(teacher.id) === 'denied' ? 'btn-danger' : 'btn-outline-danger'"
+                      (click)="getSelectionStatus(teacher.id) === 'denied' ? clearSelection(teacher.id) : selectForDenial(teacher.id)"
+                      [disabled]="isProcessing"
+                      title="Denegar">
+                      <i class="bi bi-dash-circle"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              } @empty {
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  <i class="bi bi-inbox text-muted mb-2" style="font-size: 2rem;"></i>
+                  <p class="mb-0">
+                    @if (searchTerm || selectedCourse !== 'Curso...') {
+                    No se encontraron solicitudes que coincidan con los filtros
+                    } @else {
+                    No hay solicitudes pendientes
+                    }
+                  </p>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
+    <!-- Vista de tarjetas para móviles -->
+    <div class="d-md-none">
+      @if (filteredTeachers.length > 0) {
+        @for (teacher of filteredTeachers; track teacher.id) {
+        <div class="card mb-3 shadow-sm" 
+             [class]="getSelectionStatus(teacher.id) === 'approved' ? 'border-success' : 
+                     getSelectionStatus(teacher.id) === 'denied' ? 'border-danger' : ''">
+          <div class="card-body p-3" 
+               [class]="getSelectionStatus(teacher.id) === 'approved' ? 'bg-success bg-opacity-10' : 
+                       getSelectionStatus(teacher.id) === 'denied' ? 'bg-danger bg-opacity-10' : ''">
+            <div class="row align-items-center">
+              <!-- Información del profesor -->
+              <div class="col-12 mb-3">
+                <div class="d-flex align-items-start justify-content-between">
+                  <div class="flex-grow-1">
+                    <h6 class="mb-1 fw-semibold">{{ teacher.name }} {{ teacher.lastName }}</h6>
+                    <small class="text-muted d-block">{{ teacher.user.email }}</small>
+                    <small class="text-muted">
+                      @if (teacher.course.includes("_") && teacher.course.includes("anio")) {
+                      {{ teacher.course.slice(0, teacher.course.indexOf("_")) }} año
+                      }
+                      @else {
+                      {{ teacher.course }}
+                      }
+                    </small>
+                  </div>
+                  <div class="ms-2">
+                    @if (getSelectionStatus(teacher.id) === 'approved') {
+                      <span class="badge bg-success">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Para Aprobar
+                      </span>
+                    }
+                    @else if (getSelectionStatus(teacher.id) === 'denied') {
+                      <span class="badge bg-danger">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Para Denegar
+                      </span>
+                    }
+                    @else {
+                      <span class="badge bg-secondary">
+                        <i class="bi bi-clock me-1"></i>
+                        Pendiente
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Acciones siempre visibles -->
+              <div class="col-12">
+                <div class="d-flex gap-2 justify-content-center">
+                  <button 
+                    type="button" 
+                    class="btn btn-sm flex-fill"
+                    [class]="getSelectionStatus(teacher.id) === 'approved' ? 'btn-success' : 'btn-outline-success'"
+                    (click)="getSelectionStatus(teacher.id) === 'approved' ? clearSelection(teacher.id) : selectForApproval(teacher.id)"
+                    [disabled]="isProcessing">
+                    <i class="bi bi-check-lg me-2"></i>
+                    <span class="small">Aprobar</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm flex-fill"
+                    [class]="getSelectionStatus(teacher.id) === 'denied' ? 'btn-danger' : 'btn-outline-danger'"
+                    (click)="getSelectionStatus(teacher.id) === 'denied' ? clearSelection(teacher.id) : selectForDenial(teacher.id)"
+                    [disabled]="isProcessing">
+                    <i class="bi bi-dash-circle me-2"></i>
+                    <span class="small">Denegar</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+      } @else {
+      <div class="text-center py-5">
+        <i class="bi bi-inbox text-muted mb-3" style="font-size: 3rem;"></i>
+        <p class="mb-0 text-muted">
+          @if (searchTerm || selectedCourse !== 'Curso...') {
+          No se encontraron solicitudes que coincidan con los filtros
+          } @else {
+          No hay solicitudes pendientes
+          }
+        </p>
+      </div>
+      }
+    </div>
+
     <!-- Paginación -->
-    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-bottom gap-2">
       <small class="text-muted">
-        Mostrando {{ getStartItem() }} - {{ getEndItem() }} de {{ totalItems }} items
+        Mostrando {{ getStartItem() }} - {{ getEndItem() }} de {{ totalItems }} solicitudes
       </small>
 
-      <div class=" bg-white " *ngIf="totalPages > 1">
+      <div class="bg-white" *ngIf="totalPages > 1">
         <nav>
           <ul class="pagination justify-content-center mb-0">
-            <!-- Botón Primera Página -->
-            <li class="page-item" [class.disabled]="currentPage === 1">
+            <li class="page-item d-none d-sm-block" [class.disabled]="currentPage === 1">
               <button class="page-link" (click)="goToFirstPage()" [disabled]="currentPage === 1">
                 <i class="bi bi-chevron-double-left"></i>
               </button>
             </li>
 
-            <!-- Botón Página Anterior -->
             <li class="page-item" [class.disabled]="currentPage === 1">
               <button class="page-link" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
                 <i class="bi bi-chevron-left"></i>
               </button>
             </li>
 
-            <!-- Números de página -->
             @for (page of getPageNumbers(); track page) {
             <li class="page-item" [class.active]="page === currentPage">
               <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
             </li>
             }
 
-            <!-- Botón Página Siguiente -->
             <li class="page-item" [class.disabled]="currentPage === totalPages">
               <button class="page-link" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
                 <i class="bi bi-chevron-right"></i>
               </button>
             </li>
 
-            <!-- Botón Última Página -->
-            <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <li class="page-item d-none d-sm-block" [class.disabled]="currentPage === totalPages">
               <button class="page-link" (click)="goToLastPage()" [disabled]="currentPage === totalPages">
                 <i class="bi bi-chevron-double-right"></i>
               </button>
@@ -235,9 +331,9 @@
           </ul>
         </nav>
       </div>
-      
+
       <div class="d-flex align-items-center gap-2">
-        <label for="itemsPerPage" class="form-label mb-0 small">Items por página:</label>
+        <label for="itemsPerPage" class="form-label mb-0 small d-none d-sm-inline">Items por página:</label>
         <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;" [(ngModel)]="itemsPerPage"
           (change)="currentPage = 1; applyFilters()">
           <option value="5">5</option>

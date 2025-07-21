@@ -23,34 +23,48 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
   processedData: any[] = [];
   chartColumns: any[] = [];
   
+  // Dimensiones del gráfico
+  chartWidth: number = 1000;
+  chartHeight: number = 500;
+  
   // Filtros de fecha
   startDate: string = '';
   endDate: string = '';
   
   chartType : ChartType = ChartType.AreaChart;
+  
   chartOptions: any = {
     title: 'Progreso de Rendimiento a Lo Largo del Tiempo',
     hAxis: {
       title: 'Fecha',
-      textPosition: 'out'
+      textPosition: 'out',
+      titleTextStyle: {
+        fontSize: 12
+      }
     },
     vAxis: {
       title: 'Calificación',
       minValue: 0,
-      maxValue: 5
+      maxValue: 5,
+      titleTextStyle: {
+        fontSize: 12
+      }
     },
     curveType: 'function',
-    legend: { position: 'bottom' },
+    legend: { 
+      position: 'bottom',
+      textStyle: {
+        fontSize: 12
+      }
+    },
     chartArea: {
-      width: '85%',
-      height: '65%',
+      width: '80%',
+      height: '70%',
       backgroundColor: 'transparent',
-      left: '10%',
-      right: '5%'
+      left: '12%',
+      top: '15%'
     },
     backgroundColor: 'transparent',
-    width: null,
-    height: 300,
     explorer: {
       axis: 'horizontal',
       keepInBounds: true,
@@ -60,10 +74,11 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
       startup: true,
       duration: 500,
       easing: 'out'
+    },
+    titleTextStyle: {
+      fontSize: 16
     }
   };
-  
-  height = 300;
   private resizeObserver: ResizeObserver | null = null;
   
   constructor(private elementRef: ElementRef) {}
@@ -83,7 +98,10 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
   
   ngAfterViewInit(): void {
     this.setupResizeObserver();
-    setTimeout(() => this.updateChartSize(), 300);
+    setTimeout(() => {
+      this.calculateChartDimensions();
+      this.updateChartSize();
+    }, 300);
   }
   
   public setDefaultDateRange(): void {
@@ -102,6 +120,15 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
     }
   }
   
+  public setFullYearDateRange(): void {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    
+    // Establecer todo el año: enero a diciembre
+    this.startDate = `${currentYear}-01-01`;
+    this.endDate = `${currentYear}-12-31`;
+  }
+  
   onDateRangeChange(): void {
     this.processChartData();
     this.dateRangeChange.emit({ 
@@ -116,25 +143,35 @@ export class SubjectProgressChartComponent implements OnChanges, AfterViewInit, 
     }
     
     this.resizeObserver = new ResizeObserver(() => {
-      this.updateChartSize();
+      setTimeout(() => {
+        this.calculateChartDimensions();
+      }, 100);
     });
     
+    // Observar el elemento padre del gráfico para mejor detección de cambios
+    const chartContainer = this.elementRef.nativeElement.querySelector('.chart-container');
+    if (chartContainer && chartContainer.parentElement) {
+      this.resizeObserver.observe(chartContainer.parentElement);
+    }
+  }
+  
+  private calculateChartDimensions(): void {
     const chartContainer = this.elementRef.nativeElement.querySelector('.chart-container');
     if (chartContainer) {
-      this.resizeObserver.observe(chartContainer);
+      const parentElement = chartContainer.parentElement;
+      const containerWidth = parentElement ? parentElement.clientWidth : chartContainer.clientWidth;
+      
+      // Usar todo el ancho disponible del contenedor padre
+      this.chartWidth = Math.max(containerWidth - 40, 800); // Restar un poco de padding, mínimo 800px
+      this.chartHeight = 500; // Altura fija más grande
+      
+      console.log('Chart dimensions:', { width: this.chartWidth, height: this.chartHeight, containerWidth });
     }
   }
   
   private updateChartSize(): void {
-    const chartContainer = this.elementRef.nativeElement.querySelector('.chart-container');
-    if (chartContainer) {
-      const containerWidth = chartContainer.clientWidth;
-      this.chartOptions = {
-        ...this.chartOptions,
-        width: containerWidth,
-        height: this.height
-      };
-    }
+    // Las dimensiones ya están calculadas en calculateChartDimensions()
+    // Este método puede usarse para forzar una actualización del gráfico si es necesario
   }
   
   processChartData(): void {
