@@ -321,7 +321,6 @@ export class StudentAttendanceChartComponent implements OnInit, OnChanges {
     });
 
     sortedDates.forEach(date => {
-      // Formato DD/MM/YYYY para mostrar en el gráfico
       const displayDate = this.formatChartDate(new Date(date));
       const row: any[] = [new Date(date)]; // Usar objeto Date para que Google Charts formatee correctamente
 

@@ -107,9 +107,7 @@ export class CreateNewsComponent implements OnInit, OnChanges, OnDestroy {
 
     let request;
     
-    // Determine whether we're creating or updating
     if (this.newsItem) {
-      // If updating and we have an image or the image was removed
       if (this.imageFile || this.imageChanged) {
         const formData = this.newsService.prepareFormData({
           ...newsData,
@@ -117,11 +115,9 @@ export class CreateNewsComponent implements OnInit, OnChanges, OnDestroy {
         });
         request = this.newsService.updateNewsWithImage(this.newsItem.id, formData);
       } else {
-        // If updating without changing the image
         request = this.newsService.updateNewsWithoutImage(this.newsItem.id, newsData);
       }
     } else {
-      // If creating a new news item
       const formData = this.newsService.prepareFormData({
         ...newsData,
         image: this.imageFile || undefined

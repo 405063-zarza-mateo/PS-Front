@@ -21,29 +21,30 @@ h1.text-primary {
   border-radius: 8px;
   border: none;
   transition: transform $transition-time, box-shadow $transition-time;
-  
+
   &:hover {
     box-shadow: $card-shadow;
   }
-  
+
   .card-title {
     font-weight: 600;
     color: $primary-color;
     font-size: 1.1rem;
     margin-bottom: 1rem;
   }
-  
+
   .card-body {
     padding: 1.5rem;
   }
 }
 
 // Filtros
-.form-control, .form-select {
+.form-control,
+.form-select {
   border-radius: 6px;
   padding: 0.5rem 1rem;
   border: 1px solid #ddd;
-  
+
   &:focus {
     box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25);
     border-color: lighten($primary-color, 20%);
@@ -59,12 +60,12 @@ label.form-label {
 // Spinner de carga
 .spinner-container {
   padding: 3rem 0;
-  
+
   .spinner-border {
     width: 3rem;
     height: 3rem;
   }
-  
+
   p {
     font-size: 0.9rem;
   }
@@ -85,7 +86,7 @@ label.form-label {
     margin-bottom: 0.5rem;
     opacity: 0.5;
   }
-  
+
   p {
     font-size: 0.9rem;
   }
@@ -96,7 +97,7 @@ label.form-label {
   .card {
     margin-bottom: 1.5rem;
   }
-  
+
   h1.h3 {
     font-size: 1.5rem;
   }
@@ -114,8 +115,20 @@ label.form-label {
 .alert {
   border-radius: 8px;
   padding: 1rem 1.25rem;
-  
+
   .btn-close {
     padding: 1rem;
   }
+}
+
+.filters {
+  position: sticky;
+  top: 14vh;
+  /* Distancia desde el top cuando se hace sticky */
+  z-index: 1020;
+  /* Asegura que esté por encima de otros elementos */
+  margin-bottom: 1rem;
+
+  transition: box-shadow 0.3s ease;
+  backdrop-filter: blur(5px);
 }

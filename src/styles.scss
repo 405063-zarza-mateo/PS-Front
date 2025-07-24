@@ -118,3 +118,9 @@ body {
   justify-content: center;
   padding: 2rem;
 }
+
+.navbar.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
