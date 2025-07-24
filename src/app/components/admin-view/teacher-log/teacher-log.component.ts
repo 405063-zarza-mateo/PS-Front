@@ -13,13 +13,13 @@ import { CommonModule } from '@angular/common';
 export class TeacherLogComponent {
   logs: Log[] = [];
   filteredLogs: Log[] = [];
+  allFilteredLogs: Log[] = [];
   isLoading: boolean = true;
   error: string = '';
   successMessage: string = '';
   searchTerm: string = '';
   selectedCategory: string = 'Categoría...';
   
-  // Pagination
   currentPage: number = 1;
   itemsPerPage: number = 10;
   totalItems: number = 0;
@@ -59,6 +59,12 @@ export class TeacherLogComponent {
     this.applyFilters();
   }
 
+  onItemsPerPageChange(event: Event): void {
+    this.itemsPerPage = parseInt((event.target as HTMLSelectElement).value);
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
   resetCategoryFilter(): void {
     this.selectedCategory = 'Categoría...';
     this.currentPage = 1;
@@ -66,7 +72,6 @@ export class TeacherLogComponent {
   }
 
   applyFilters(): void {
-    // Apply category filter
     let filtered = this.logs;
     
     if (this.selectedCategory !== 'Categoría...') {
@@ -75,26 +80,22 @@ export class TeacherLogComponent {
       );
     }
     
-    // Apply search filter
     if (this.searchTerm) {
       filtered = filtered.filter(log =>
         log.message.toLowerCase().includes(this.searchTerm)
       );
     }
     
-    // Sort by time (newest first)
     filtered = [...filtered].sort((a, b) => 
       new Date(b.time).getTime() - new Date(a.time).getTime()
     );
     
-    this.filteredLogs = filtered;
-    // Update pagination
+    this.allFilteredLogs = filtered;
     this.updatePagination();
   }
 
-  // Métodos de paginación mejorados
   getStartItem(): number {
-    return (this.currentPage - 1) * this.itemsPerPage + 1;
+    return this.totalItems === 0 ? 0 : (this.currentPage - 1) * this.itemsPerPage + 1;
   }
 
   getEndItem(): number {
@@ -102,25 +103,22 @@ export class TeacherLogComponent {
   }
 
   updatePagination(): void {
-    this.totalItems = this.filteredLogs.length;
+    this.totalItems = this.allFilteredLogs.length;
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
    
-    // Ajustar página actual si es necesario
     if (this.currentPage > this.totalPages) {
       this.currentPage = Math.max(1, this.totalPages);
     }
    
-    // Calcular items para la página actual
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    this.filteredLogs = this.filteredLogs.slice(startIndex, endIndex);
+    this.filteredLogs = this.allFilteredLogs.slice(startIndex, endIndex);
   }
 
-  // Métodos de paginación
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.applyFilters(); // Reaplicar filtros para recalcular la página
+      this.updatePagination();
     }
   }
 
@@ -140,18 +138,15 @@ export class TeacherLogComponent {
     this.goToPage(this.currentPage + 1);
   }
 
-  // Obtener array de páginas para mostrar en la paginación
   getPageNumbers(): number[] {
     const pages: number[] = [];
     const maxVisiblePages = 5;
    
     if (this.totalPages <= maxVisiblePages) {
-      // Si hay pocas páginas, mostrar todas
       for (let i = 1; i <= this.totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Lógica para mostrar páginas con puntos suspensivos
       const startPage = Math.max(1, this.currentPage - 2);
       const endPage = Math.min(this.totalPages, this.currentPage + 2);
      

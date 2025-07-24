@@ -2,9 +2,7 @@
   <h1 class="h3 mb-2 text-primary">Listado de Alumnos (Admin)</h1>
 
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <!-- Filtros -->
     <div class="d-flex gap-2">
-      <!-- Filtrar por curso -->
       <div class="input-group">
         <span class="input-group-text bg-light py-1">
           <i class="bi bi-filter"></i>
@@ -18,7 +16,6 @@
         </select>
       </div>
 
-      <!-- Buscar -->
       <div class="input-group">
         <span class="input-group-text bg-light py-1">
           <i class="bi bi-search"></i>
@@ -27,14 +24,12 @@
           (input)="onSearch($event)" [value]="searchTerm">
       </div>
 
-      <!-- Botón para limpiar filtros -->
       <button *ngIf="searchTerm || selectedCourse" class="btn btn-outline-secondary py-1" style="height: 5vh;"
         (click)="resetFilters()">
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
 
-    <!-- Botones de exportación -->
     <div class="d-flex gap-2">
       <button class="btn btn-outline-success" (click)="exportToExcel()">
         <i class="bi bi-file-earmark-excel me-1"></i> Exportar a Excel
@@ -45,13 +40,11 @@
     </div>
   </div>
 
-  <!-- Mensaje de error -->
   <div class="alert alert-danger mb-4" *ngIf="error">
     {{ error }}
     <button type="button" class="btn-close float-end" (click)="error = ''"></button>
   </div>
 
-  <!-- Mensaje de éxito -->
   @if (successMessage) {
   <div class="alert alert-success alert-dismissible fade show" role="alert">
     {{ successMessage }}
@@ -59,7 +52,6 @@
   </div>
   }
 
-  <!-- Indicador de carga -->
   @if (isLoading) {
   <div class="spinner-container text-center my-5">
     <div class="spinner-border text-primary" role="status">
@@ -109,7 +101,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (student of paginatedStudents; track student.id) {
+            @for (student of filteredStudents; track student.id) {
             @if (getReviews(student).length > 0) {
             @for (review of getReviews(student); track review) {
             <tr>
@@ -154,27 +146,57 @@
       </div>
     </div>
 
-    <!-- Paginación -->
-    <div class="card-footer bg-white py-3">
-      <nav>
-        <ul class="pagination justify-content-end mb-0">
-          <li class="page-item" [class.disabled]="currentPage === 1">
-            <a class="page-link" href="#" (click)="goToPage(currentPage - 1); $event.preventDefault()">
-              <i class="bi bi-chevron-left"></i>
-            </a>
-          </li>
-          @for (page of pageNumbers; track page) {
-          <li class="page-item" [class.active]="page === currentPage">
-            <a class="page-link" href="#" (click)="goToPage(page); $event.preventDefault()">{{ page }}</a>
-          </li>
-          }
-          <li class="page-item" [class.disabled]="currentPage === totalPages">
-            <a class="page-link" href="#" (click)="goToPage(currentPage + 1); $event.preventDefault()">
-              <i class="bi bi-chevron-right"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-bottom gap-2">
+      <small class="text-muted">
+        Mostrando {{ getStartItem() }} - {{ getEndItem() }} de {{ totalItems }} registros
+      </small>
+
+      <div class="bg-white" *ngIf="totalPages > 1">
+        <nav>
+          <ul class="pagination justify-content-center mb-0">
+            <li class="page-item d-none d-sm-block" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToFirstPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-double-left"></i>
+              </button>
+            </li>
+
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            </li>
+
+            @for (page of getPageNumbers(); track page) {
+            <li class="page-item" [class.active]="page === currentPage">
+              <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            </li>
+            }
+
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </li>
+
+            <li class="page-item d-none d-sm-block" [class.disabled]="currentPage === totalPages">
+              <button class="page-link" (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+                <i class="bi bi-chevron-double-right"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <label for="itemsPerPage" class="form-label mb-0 small d-none d-sm-inline">Items por página:</label>
+        <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;"
+          [value]="itemsPerPage" (change)="onItemsPerPageChange($event)">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
     </div>
   </div>
 </div>

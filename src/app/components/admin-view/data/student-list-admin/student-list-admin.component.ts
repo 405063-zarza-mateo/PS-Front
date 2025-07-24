@@ -17,28 +17,25 @@ import { StudentService } from '../../../../services/student-service.service';
   styleUrl: './student-list-admin.component.scss'
 })
 export class StudentListAdminComponent implements OnInit, OnDestroy {
-  // Subjects for unsubscribing
   private destroy$ = new Subject<void>();
 
-  // Data properties
   students: Student[] = [];
   filteredStudents: Student[] = [];
+  allFilteredStudents: Student[] = [];
   isLoading = false;
   error = '';
   successMessage = '';
 
-  // Filter properties
   searchTerm = '';
   selectedCourse = '';
   sortBy = 'default';
   sortDirection = 'asc';
 
-  // Pagination
   currentPage = 1;
   itemsPerPage = 10;
   totalItems = 0;
+  totalPages = 0;
 
-  // Courses list
   courses: String[] = [];
 
   constructor(private studentService: StudentService) { }
@@ -49,7 +46,6 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Complete the subject to unsubscribe from all subscriptions
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -86,76 +82,78 @@ export class StudentListAdminComponent implements OnInit, OnDestroy {
       });
   }
 
-applyFilters(): void {
-  let filtered = [...this.students];
+  applyFilters(): void {
+    let filtered = [...this.students];
 
-  // Apply search filter
-  if (this.searchTerm) {
-    const term = this.searchTerm.toLowerCase();
-    filtered = filtered.filter(student => {
-      const studentMatch = student.name.toLowerCase().includes(term) ||
-        student.lastName.toLowerCase().includes(term);
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(student => {
+        const studentMatch = student.name.toLowerCase().includes(term) ||
+          student.lastName.toLowerCase().includes(term);
 
-      const teacherMatch = student.reviews?.some(review => {
-        const teacherFullName = `${review.teacher.name} ${review.teacher.lastName}`.toLowerCase();
-        return teacherFullName.includes(term) ||
-          review.teacher.name.toLowerCase().includes(term) ||
-          review.teacher.lastName.toLowerCase().includes(term);
+        const teacherMatch = student.reviews?.some(review => {
+          const teacherFullName = `${review.teacher.name} ${review.teacher.lastName}`.toLowerCase();
+          return teacherFullName.includes(term) ||
+            review.teacher.name.toLowerCase().includes(term) ||
+            review.teacher.lastName.toLowerCase().includes(term);
+        });
+
+        return studentMatch || teacherMatch;
       });
-
-      return studentMatch || teacherMatch;
-    });
-  }
-
-  // Apply course filter
-  if (this.selectedCourse) {
-    filtered = filtered.filter(student =>
-      student.course === this.selectedCourse
-    );
-  }
-
-  // Apply sorting
-  filtered.sort((a, b) => {
-    const dirMod = this.sortDirection === 'asc' ? 1 : -1;
-
-    switch (this.sortBy) {
-      case 'name':
-        return (a.name.localeCompare(b.name)) * dirMod;
-      case 'lastName':
-        return (a.lastName.localeCompare(b.lastName)) * dirMod;
-      case 'course':
-        return (a.course.localeCompare(b.course)) * dirMod;
-      case 'assistance':
-        return (a.assistance - b.assistance) * dirMod;
-      case 'date':
-        // Sort by latest review date
-        const aLatest = a.reviews.length ? new Date(a.reviews[a.reviews.length - 1].date).getTime() : 0;
-        const bLatest = b.reviews.length ? new Date(b.reviews[b.reviews.length - 1].date).getTime() : 0;
-        return (aLatest - bLatest) * dirMod;
-      case 'default':
-      default:
-        // Ordenamiento por defecto: curso, luego por nombre, luego por fecha de reseña más reciente
-        const courseOrder = this.courses.indexOf(a.course) - this.courses.indexOf(b.course);
-        if (courseOrder !== 0) return courseOrder;
-
-        const nameOrder = a.name.localeCompare(b.name);
-        if (nameOrder !== 0) return nameOrder;
-
-        // Comparar por fecha de reseña más reciente (más reciente primero)
-        const aLatestDate = a.reviews.length ? new Date(a.reviews[a.reviews.length - 1].date).getTime() : 0;
-        const bLatestDate = b.reviews.length ? new Date(b.reviews[b.reviews.length - 1].date).getTime() : 0;
-        return bLatestDate - aLatestDate; // Más reciente primero (orden descendente)
     }
-  });
 
-  this.filteredStudents = filtered;
-  this.totalItems = filtered.length;
+    if (this.selectedCourse) {
+      filtered = filtered.filter(student =>
+        student.course === this.selectedCourse
+      );
+    }
 
-  // Reset to first page if no results on current page
-  if (this.currentPage > this.totalPages && this.totalPages > 0) {
-    this.currentPage = 1;
+    filtered.sort((a, b) => {
+      const dirMod = this.sortDirection === 'asc' ? 1 : -1;
+
+      switch (this.sortBy) {
+        case 'name':
+          return (a.name.localeCompare(b.name)) * dirMod;
+        case 'lastName':
+          return (a.lastName.localeCompare(b.lastName)) * dirMod;
+        case 'course':
+          return (a.course.localeCompare(b.course)) * dirMod;
+        case 'assistance':
+          return (a.assistance - b.assistance) * dirMod;
+        case 'date':
+          const aLatest = a.reviews.length ? new Date(a.reviews[a.reviews.length - 1].date).getTime() : 0;
+          const bLatest = b.reviews.length ? new Date(b.reviews[b.reviews.length - 1].date).getTime() : 0;
+          return (aLatest - bLatest) * dirMod;
+        case 'default':
+        default:
+          const courseOrder = this.courses.indexOf(a.course) - this.courses.indexOf(b.course);
+          if (courseOrder !== 0) return courseOrder;
+
+          const nameOrder = a.name.localeCompare(b.name);
+          if (nameOrder !== 0) return nameOrder;
+
+          const aLatestDate = a.reviews.length ? new Date(a.reviews[a.reviews.length - 1].date).getTime() : 0;
+          const bLatestDate = b.reviews.length ? new Date(b.reviews[b.reviews.length - 1].date).getTime() : 0;
+          return bLatestDate - aLatestDate;
+      }
+    });
+
+    this.allFilteredStudents = filtered;
+    this.updatePagination();
   }
-}
+
+  updatePagination(): void {
+    this.totalItems = this.allFilteredStudents.length;
+    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+
+    if (this.currentPage > this.totalPages && this.totalPages > 0) {
+      this.currentPage = 1;
+    }
+
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.filteredStudents = this.allFilteredStudents.slice(start, end);
+  }
 
   onSearch(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value;
@@ -165,6 +163,12 @@ applyFilters(): void {
 
   onCourseChange(event: Event): void {
     this.selectedCourse = (event.target as HTMLSelectElement).value;
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  onItemsPerPageChange(event: Event): void {
+    this.itemsPerPage = parseInt((event.target as HTMLSelectElement).value);
     this.currentPage = 1;
     this.applyFilters();
   }
@@ -187,37 +191,54 @@ applyFilters(): void {
   }
 
   goToPage(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
-    this.currentPage = page;
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.totalItems / this.itemsPerPage);
-  }
-
-  get pageNumbers(): number[] {
-    const pages = [];
-    // Mostrar menos páginas en dispositivos móviles
-    const maxVisiblePages = window.innerWidth < 768 ? 3 : 5;
-
-    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
-
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
     }
+  }
 
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+  goToFirstPage(): void {
+    this.goToPage(1);
+  }
+
+  goToLastPage(): void {
+    this.goToPage(this.totalPages);
+  }
+
+  goToPreviousPage(): void {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  goToNextPage(): void {
+    this.goToPage(this.currentPage + 1);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+
+    if (this.totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      const startPage = Math.max(1, this.currentPage - 2);
+      const endPage = Math.min(this.totalPages, this.currentPage + 2);
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
     }
 
     return pages;
   }
 
-  get paginatedStudents(): Student[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    return this.filteredStudents.slice(start, end);
+  getStartItem(): number {
+    return this.totalItems === 0 ? 0 : (this.currentPage - 1) * this.itemsPerPage + 1;
+  }
+
+  getEndItem(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
   }
 
   getReviews(student: Student): Review[] {
@@ -248,10 +269,10 @@ applyFilters(): void {
       return "text-primary fw-bold"
     } else if (gender == "Femenino") {
       return "text-female fw-bold"
-    } return ""
+    }
+    return ""
   }
 
-  // Helper para formatear nombre de curso en vista móvil
   formatCourse(course: String): String {
     if (course.includes("_") && course.includes("grado")) {
       return `${course.slice(0, course.indexOf("_"))} grado`;
@@ -261,14 +282,25 @@ applyFilters(): void {
     return course;
   }
 
+  private getCurrentDateTime(): string {
+    const now = new Date();
+    const argTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires" }));
+    const day = argTime.getDate().toString().padStart(2, '0');
+    const month = (argTime.getMonth() + 1).toString().padStart(2, '0');
+    const year = argTime.getFullYear();
+    const hours = argTime.getHours().toString().padStart(2, '0');
+    const minutes = argTime.getMinutes().toString().padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  }
+
   exportToExcel(): void {
     const data: any[] = [];
 
-    this.filteredStudents.forEach(student => {
+    this.allFilteredStudents.forEach(student => {
       const reviews = this.getReviews(student);
 
       if (reviews.length === 0) {
-        // Estudiante sin reviews
         data.push({
           'Nombre': student.name,
           'Apellido': student.lastName,
@@ -295,7 +327,7 @@ applyFilters(): void {
             'Lectura': this.getSubjectScore(review.results, 'Lectura'),
             'Disciplina': this.getSubjectScore(review.results, 'Disciplina'),
             'Profesor': `${review.teacher.name} ${review.teacher.lastName}`,
-            'Fecha': new Date(review.date).toLocaleDateString()
+            'Fecha': new Date(review.date).toLocaleDateString('es-AR')
           });
         });
       }
@@ -308,7 +340,7 @@ applyFilters(): void {
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-    saveAs(blob, `estudiantes_${new Date().toISOString().split('T')[0]}.xlsx`);
+    saveAs(blob, `Lista estudiantes (${this.getCurrentDateTime().replace(':', '-').replace(' ', ' ')}).xlsx`);
 
     this.successMessage = 'Datos exportados a Excel correctamente';
     setTimeout(() => this.successMessage = '', 3000);
@@ -318,7 +350,7 @@ applyFilters(): void {
     let stataContent = 'id\tnombre\tapellido\tsexo\tcurso\tasistencia\tmatematica\tescritura\tlectura\tdisciplina\tprofesor\tfecha\n';
     let rowId = 1;
 
-    this.filteredStudents.forEach(student => {
+    this.allFilteredStudents.forEach(student => {
       const reviews = this.getReviews(student);
 
       if (reviews.length === 0) {
@@ -331,13 +363,13 @@ applyFilters(): void {
           stataContent += `${this.getSubjectScore(review.results, 'Lectura')}\t`;
           stataContent += `${this.getSubjectScore(review.results, 'Disciplina')}\t`;
           stataContent += `${review.teacher.name} ${review.teacher.lastName}\t`;
-          stataContent += `${new Date(review.date).toLocaleDateString()}\n`;
+          stataContent += `${new Date(review.date).toLocaleDateString('es-AR')}\n`;
         });
       }
     });
 
     const blob = new Blob([stataContent], { type: 'text/tab-separated-values' });
-    saveAs(blob, `estudiantes_stata_${new Date().toISOString().split('T')[0]}.csv`);
+    saveAs(blob, `Lista estudiantes (${this.getCurrentDateTime().replace(':', '-').replace(' ', ' ')}).csv`);
 
     this.successMessage = 'Datos exportados en formato compatible con Stata correctamente';
     setTimeout(() => this.successMessage = '', 3000);

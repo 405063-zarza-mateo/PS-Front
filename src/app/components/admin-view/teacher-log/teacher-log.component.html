@@ -197,7 +197,7 @@
       <div class="d-flex align-items-center gap-2">
         <label for="itemsPerPage" class="form-label mb-0 small d-none d-sm-inline">Items por página:</label>
         <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;"
-          (change)="currentPage = 1; applyFilters()">
+          [value]="itemsPerPage" (change)="onItemsPerPageChange($event)">
           <option value="5">5</option>
           <option value="10">10</option>
           <option value="20">20</option>
