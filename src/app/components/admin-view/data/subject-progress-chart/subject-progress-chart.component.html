@@ -1,34 +1,4 @@
-<!-- Filtros de fecha -->
-<div class="row mb-3">
-  <div class="col-md-3">
-    <label for="startDate" class="form-label">Fecha Inicio</label>
-    <input type="date" 
-           class="form-control" 
-           id="startDate"
-           [(ngModel)]="startDate" 
-           (ngModelChange)="onDateRangeChange()">
-  </div>
-  <div class="col-md-3">
-    <label for="endDate" class="form-label">Fecha Fin</label>
-    <input type="date" 
-           class="form-control" 
-           id="endDate"
-           [(ngModel)]="endDate" 
-           (ngModelChange)="onDateRangeChange()">
-  </div>
-  <div class="col-md-6 d-flex align-items-end gap-2">
-    <button class="btn btn-outline-primary" 
-            (click)="setDefaultDateRange(); onDateRangeChange();">
-      <i class="bi bi-arrow-clockwise me-1"></i>
-      Semestre Actual
-    </button>
-    <button class="btn btn-outline-secondary" 
-            (click)="setFullYearDateRange(); onDateRangeChange();">
-      <i class="bi bi-calendar me-1"></i>
-      Año Completo
-    </button>
-  </div>
-</div>
+
 
 <!-- Gráfico -->
 <div *ngIf="processedData && processedData.length > 0; else noData" class="chart-wrapper">

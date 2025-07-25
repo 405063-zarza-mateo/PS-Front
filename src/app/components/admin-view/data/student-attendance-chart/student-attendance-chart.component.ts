@@ -23,8 +23,8 @@ export class StudentAttendanceChartComponent implements OnInit, OnChanges {
   chartHeight = 400;
 
   // Filtros de fecha
-  startDate: string = '';
-  endDate: string = '';
+@Input() startDate: string = '';
+@Input() endDate: string = '';
 
   // Estadísticas
   totalDays: number = 0;
@@ -54,7 +54,6 @@ export class StudentAttendanceChartComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     console.log('StudentAttendanceChartComponent inicializado');
     console.log('Datos iniciales de asistencia:', this.assistanceData);
-    this.setCurrentSemester();
     this.setupChartOptions();
   }
 
@@ -66,56 +65,7 @@ export class StudentAttendanceChartComponent implements OnInit, OnChanges {
     }
   }
 
-  setCurrentSemester(): void {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1; // getMonth() devuelve 0-11, necesitamos 1-12
-
-    // Determinar si estamos en primer semestre (enero-junio) o segundo semestre (julio-diciembre)
-    if (currentMonth >= 1 && currentMonth <= 6) {
-      // Primer semestre: enero a junio
-      this.startDate = `${currentYear}-01-01`;
-      this.endDate = `${currentYear}-06-30`;
-      console.log('Estableciendo primer semestre:', this.startDate, 'a', this.endDate);
-    } else {
-      // Segundo semestre: julio a diciembre
-      this.startDate = `${currentYear}-07-01`;
-      this.endDate = `${currentYear}-12-31`;
-      console.log('Estableciendo segundo semestre:', this.startDate, 'a', this.endDate);
-    }
-
-    this.onDateRangeChange();
-  }
-
-  setCurrentYear(): void {
-    const currentYear = new Date().getFullYear();
-    this.startDate = `${currentYear}-01-01`;
-    this.endDate = `${currentYear}-12-31`;
-    console.log('Estableciendo año completo:', this.startDate, 'a', this.endDate);
-    this.onDateRangeChange();
-  }
-
-  // Método adicional para establecer el primer semestre manualmente
-  setFirstSemester(): void {
-    const currentYear = new Date().getFullYear();
-    this.startDate = `${currentYear}-01-01`;
-    this.endDate = `${currentYear}-06-30`;
-    console.log('Estableciendo primer semestre manualmente:', this.startDate, 'a', this.endDate);
-    this.onDateRangeChange();
-  }
-
-  // Método adicional para establecer el segundo semestre manualmente
-  setSecondSemester(): void {
-    const currentYear = new Date().getFullYear();
-    this.startDate = `${currentYear}-07-01`;
-    this.endDate = `${currentYear}-12-31`;
-    console.log('Estableciendo segundo semestre manualmente:', this.startDate, 'a', this.endDate);
-    this.onDateRangeChange();
-  }
-
-  onDateRangeChange(): void {
-    this.prepareChartData();
-  }
+  
 
   private setupChartOptions(): void {
     this.chartOptions = {

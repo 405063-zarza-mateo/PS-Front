@@ -1,39 +1,5 @@
 <div class="attendance-chart-container">
       <!-- Filtros de fecha -->
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <label for="startDate" class="form-label">Fecha de inicio</label>
-          <input 
-            type="date" 
-            class="form-control" 
-            id="startDate"
-            [(ngModel)]="startDate" 
-            (ngModelChange)="onDateRangeChange()"
-            [max]="endDate">
-        </div>
-        <div class="col-md-4">
-          <label for="endDate" class="form-label">Fecha de fin</label>
-          <input 
-            type="date" 
-            class="form-control" 
-            id="endDate"
-            [(ngModel)]="endDate" 
-            (ngModelChange)="onDateRangeChange()"
-            [min]="startDate">
-        </div>
-        <div class="col-md-4 d-flex align-items-end">
-          <button 
-            class="btn btn-outline-primary me-2" 
-            (click)="setCurrentSemester()">
-            Semestre Actual
-          </button>
-          <button 
-            class="btn btn-outline-secondary" 
-            (click)="setCurrentYear()">
-            Año Completo
-          </button>
-        </div>
-      </div>
 
       <!-- Gráfico -->
       <div class="chart-wrapper" *ngIf="chartData.length > 0">

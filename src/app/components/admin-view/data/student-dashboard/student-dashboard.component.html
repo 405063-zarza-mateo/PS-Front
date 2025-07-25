@@ -1,61 +1,99 @@
 <div class="container py-4">
 
   <!-- Filtros -->
-  <div class="card shadow-sm mb-4 ">
-    <div class="card-body">
-      <h5 class="card-title mb-3">Filtros</h5>
-      <div class="row g-3">
-
-        <div class="col-md-4">
-          <div class="form-group">
-            <label for="personFilter" class="form-label">
-              {{ selectedUserType === 'students' ? 'Alumno' : 'Profesor' }}
-            </label>
-            <select class="form-select" id="personFilter" [(ngModel)]="selectedPersonId"
-              (ngModelChange)="onPersonFilterChange()">
-              <option value="">{{ selectedUserType === 'students' ? 'Todos los alumnos' : 'Todos los profesores' }}</option>
-              @for (person of getFilteredPersonsForSelect(); track person.id) {
-                <option [value]="person.id">{{ person.name }} {{ person.lastName }}</option>
-              }
-            </select>
-          </div>
+<!-- Filtros -->
+<div class="card shadow-sm mb-4 ">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Filtros</h5>
+    
+    <!-- Primera fila de filtros -->
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="personFilter" class="form-label">
+            {{ selectedUserType === 'students' ? 'Alumno' : 'Profesor' }}
+          </label>
+          <select class="form-select" id="personFilter" [(ngModel)]="selectedPersonId"
+            (ngModelChange)="onPersonFilterChange()">
+            <option value="">{{ selectedUserType === 'students' ? 'Todos los alumnos' : 'Todos los profesores' }}</option>
+            @for (person of getFilteredPersonsForSelect(); track person.id) {
+              <option [value]="person.id">{{ person.name }} {{ person.lastName }}</option>
+            }
+          </select>
         </div>
+      </div>
 
-        <div class="col-md-3">
-          <div class="form-group">
-            <label for="courseFilter" class="form-label">Curso</label>
-            <select class="form-select" id="courseFilter" [(ngModel)]="selectedCourse"
-              (ngModelChange)="onCourseFilterChange()">
-              <option value="">Todos los cursos</option>
-              @for (course of courses; track course) {
-              <option [value]="course">{{ formatCourseName(course) }}</option>
-              }
-            </select>
-          </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label for="courseFilter" class="form-label">Curso</label>
+          <select class="form-select" id="courseFilter" [(ngModel)]="selectedCourse"
+            (ngModelChange)="onCourseFilterChange()">
+            <option value="">Todos los cursos</option>
+            @for (course of courses; track course) {
+            <option [value]="course">{{ formatCourseName(course) }}</option>
+            }
+          </select>
         </div>
+      </div>
 
-        <div class="col-md-3">
-          <div class="form-group">
-            <label for="subjectFilter" class="form-label">Asignatura</label>
-            <select class="form-select" id="subjectFilter" [(ngModel)]="selectedSubject"
-              (ngModelChange)="onFilterChange()">
-              <option value="">Todas las asignaturas</option>
-              @for (subject of subjects; track subject) {
-              <option [value]="subject">{{ subject }}</option>
-              }
-            </select>
-          </div>
+      <div class="col-md-3">
+        <div class="form-group">
+          <label for="subjectFilter" class="form-label">Asignatura</label>
+          <select class="form-select" id="subjectFilter" [(ngModel)]="selectedSubject"
+            (ngModelChange)="onFilterChange()">
+            <option value="">Todas las asignaturas</option>
+            @for (subject of subjects; track subject) {
+            <option [value]="subject">{{ subject }}</option>
+            }
+          </select>
         </div>
+      </div>
 
-        <div class="col-md-2 d-flex align-items-end">
-          <button class="btn btn-outline-secondary w-100" (click)="resetFilters()">
-            <i class="bi bi-x-lg me-1"></i> Limpiar
-          </button>
-        </div>
-
+      <div class="col-md-2 d-flex align-items-end">
+        <button class="btn btn-outline-secondary w-100" (click)="resetFilters()">
+          <i class="bi bi-x-lg me-1"></i> Limpiar
+        </button>
       </div>
     </div>
+
+    <!-- Segunda fila - Filtros de fecha -->
+    <div class="row g-3 mt-2">
+      <div class="col-md-3">
+        <label for="startDate" class="form-label">Fecha de inicio</label>
+        <input
+          type="date"
+          class="form-control"
+          id="startDate"
+          [(ngModel)]="startDate"
+          (ngModelChange)="onDateRangeChange()"
+          [max]="endDate">
+      </div>
+      <div class="col-md-3">
+        <label for="endDate" class="form-label">Fecha de fin</label>
+        <input
+          type="date"
+          class="form-control"
+          id="endDate"
+          [(ngModel)]="endDate"
+          (ngModelChange)="onDateRangeChange()"
+          [min]="startDate">
+      </div>
+      <div class="col-md-6 d-flex align-items-end">
+        <button
+          class="btn btn-outline-primary me-2"
+          (click)="setCurrentSemester()">
+          Semestre Actual
+        </button>
+        <button
+          class="btn btn-outline-secondary"
+          (click)="setCurrentYear()">
+          Año Completo
+        </button>
+      </div>
+    </div>
+
   </div>
+</div>
 
   <!-- Mensajes -->
   <div class="alert alert-danger mb-4" *ngIf="error">
@@ -110,7 +148,7 @@
             {{ selectedSubject ? 'Progreso de ' + selectedSubject + ' a lo Largo del Tiempo' : 'Progreso de Rendimiento a lo Largo del Tiempo' }}
           </h5>
           <app-subject-progress-chart [chartData]="subjectProgressData"
-            [subjects]="selectedSubject ? [selectedSubject] : subjects" (dateRangeChange)="onDateRangeChange($event)">
+            [subjects]="selectedSubject ? [selectedSubject] : subjects" >
           </app-subject-progress-chart>
         </div>
       </div>
@@ -127,10 +165,12 @@
       
      
       <!-- Componente de asistencia -->
-      <app-student-attendance-chart 
-        [assistanceData]="assistanceData"
-        [selectedCourse]="selectedCourse">
-      </app-student-attendance-chart>
+  <app-student-attendance-chart 
+  [assistanceData]="assistanceData"
+  [selectedCourse]="selectedCourse"
+  [startDate]="startDate"
+  [endDate]="endDate">
+</app-student-attendance-chart>
       
     </div>
 
