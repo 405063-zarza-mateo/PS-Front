@@ -31,15 +31,17 @@
 </div>
 
 <!-- Gráfico -->
-<div *ngIf="processedData && processedData.length > 0; else noData" class="chart-container" style="width: 100%;">
-  <google-chart
-    [type]="chartType"
-    [data]="processedData"
-    [columns]="chartColumns"
-    [options]="chartOptions"
-    [width]="chartWidth"
-    [height]="chartHeight">
-  </google-chart>
+<div *ngIf="processedData && processedData.length > 0; else noData" class="chart-wrapper">
+  <div class="chart-container" style="width: 100%; overflow: hidden;">
+    <google-chart
+      [type]="chartType"
+      [data]="processedData"
+      [columns]="chartColumns"
+      [options]="chartOptions"
+      [width]="chartWidth"
+      [height]="chartHeight">
+    </google-chart>
+  </div>
 </div>
 
 <ng-template #noData>

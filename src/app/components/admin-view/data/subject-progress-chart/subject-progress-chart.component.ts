@@ -42,7 +42,7 @@ export class SubjectProgressChartComponent
 
   // Dimensiones del gráfico
   chartWidth: number = 1000;
-  chartHeight: number = 500;
+  chartHeight: number = 400;
 
   // Filtros de fecha
   startDate: string = '';
@@ -50,54 +50,55 @@ export class SubjectProgressChartComponent
 
   chartType: ChartType = ChartType.AreaChart;
 
-  chartOptions: any = {
-    title: 'Progreso de Rendimiento a Lo Largo del Tiempo',
-    hAxis: {
-      title: 'Fecha',
-      textPosition: 'out',
-      titleTextStyle: {
-        fontSize: 12,
-      },
-    },
-    vAxis: {
-      title: 'Calificación',
-      minValue: 0,
-      maxValue: 5,
-      titleTextStyle: {
-        fontSize: 12,
-      },
-    },
-    curveType: 'function',
-    legend: {
-      position: 'bottom',
-      textStyle: {
-        fontSize: 12,
-      },
-    },
-    isStacked: 'false',
-
-    chartArea: {
-      width: '80%',
-      height: '70%',
-      backgroundColor: 'transparent',
-      left: '12%',
-      top: '15%',
-    },
-    backgroundColor: 'transparent',
-    explorer: {
-      axis: 'horizontal',
-      keepInBounds: true,
-      maxZoomIn: 4.0,
-    },
-    animation: {
-      startup: true,
-      duration: 500,
-      easing: 'out',
-    },
+chartOptions: any = {
+  title: 'Progreso de Rendimiento a Lo Largo del Tiempo',
+  hAxis: {
+    title: 'Fecha',
+    textPosition: 'out',
     titleTextStyle: {
-      fontSize: 16,
+      fontSize: 12,
     },
-  };
+  },
+  areaOpacity: 0, 
+  vAxis: {
+    title: 'Calificación',
+    minValue: 0,
+    maxValue: 5,
+    titleTextStyle: {
+      fontSize: 12,
+    },
+  },
+  curveType: 'function',
+  legend: {
+    position: 'bottom',
+    textStyle: {
+      fontSize: 12,
+    },
+  },
+  isStacked: 'false',
+  
+  chartArea: {
+  width: '85%',
+        height: '65%',
+        backgroundColor: 'transparent',
+        left: '10%',
+        right: '5%'
+  },
+  backgroundColor: 'transparent',
+  explorer: {
+    axis: 'horizontal',
+    keepInBounds: true,
+    maxZoomIn: 4.0,
+  },
+  animation: {
+    startup: true,
+    duration: 500,
+    easing: 'out',
+  },
+  titleTextStyle: {
+    fontSize: 16,
+  },
+};
   private resizeObserver: ResizeObserver | null = null;
 
   constructor(private elementRef: ElementRef) {}
@@ -175,27 +176,20 @@ export class SubjectProgressChartComponent
     }
   }
 
-  private calculateChartDimensions(): void {
-    const chartContainer =
-      this.elementRef.nativeElement.querySelector('.chart-container');
-    if (chartContainer) {
-      const parentElement = chartContainer.parentElement;
-      const containerWidth = parentElement
-        ? parentElement.clientWidth
-        : chartContainer.clientWidth;
+private calculateChartDimensions(): void {
+  const chartWrapper = this.elementRef.nativeElement.querySelector('.chart-wrapper');
+  if (chartWrapper) {
+    const availableWidth = chartWrapper.clientWidth;
+    this.chartWidth = availableWidth > 0 ? availableWidth : 1000;
+    this.chartHeight = 400;
 
-      // Usar todo el ancho disponible del contenedor padre
-      this.chartWidth = Math.max(containerWidth - 40, 800); // Restar un poco de padding, mínimo 800px
-      this.chartHeight = 500; // Altura fija más grande
-
-      console.log('Chart dimensions:', {
-        width: this.chartWidth,
-        height: this.chartHeight,
-        containerWidth,
-      });
-    }
+    console.log('Chart dimensions:', {
+      width: this.chartWidth,
+      height: this.chartHeight,
+      availableWidth,
+    });
   }
-
+}
   private updateChartSize(): void {
     // Las dimensiones ya están calculadas en calculateChartDimensions()
     // Este método puede usarse para forzar una actualización del gráfico si es necesario

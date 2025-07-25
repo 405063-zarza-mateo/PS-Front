@@ -1,0 +1,147 @@
+.full-terms-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .terms-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #007bff;
+    }
+
+    .terms-header h1 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #1a365d;
+    }
+
+    .terms-header h2 {
+      font-size: 20px;
+      color: #4a5568;
+      margin-bottom: 0;
+    }
+
+    .terms-content {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    .terms-section {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .terms-section:last-child {
+      border-bottom: none;
+    }
+
+    .terms-section h3 {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1a365d;
+      margin-bottom: 15px;
+      padding-bottom: 5px;
+      border-bottom: 2px solid #007bff;
+    }
+
+    .terms-section h4 {
+      font-size: 16px;
+      font-weight: bold;
+      color: #2d3748;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .terms-section p {
+      margin-bottom: 10px;
+      text-align: justify;
+    }
+
+    .terms-section ul {
+      margin-bottom: 15px;
+      padding-left: 25px;
+    }
+
+    .terms-section li {
+      margin-bottom: 5px;
+    }
+
+    .terms-footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #007bff;
+      text-align: center;
+    }
+
+    .terms-footer p {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .footer-note {
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+      font-weight: normal !important;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: 1px solid #007bff;
+      border-radius: 4px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      color: #007bff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #007bff;
+      color: white;
+    }
+
+    .bi {
+      font-style: normal;
+    }
+
+    .bi-arrow-left::before {
+      content: "←";
+    }
+
+    .me-2 {
+      margin-right: 8px;
+    }
+
+    .mb-4 {
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .full-terms-container {
+        padding: 15px;
+      }
+      
+      .terms-content {
+        padding: 20px;
+      }
+      
+      .terms-header h1 {
+        font-size: 24px;
+      }
+      
+      .terms-header h2 {
+        font-size: 18px;
+      }
+    }

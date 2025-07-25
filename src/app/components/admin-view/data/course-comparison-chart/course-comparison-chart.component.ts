@@ -14,7 +14,7 @@ export class CourseComparisonChartComponent implements OnChanges {
   
   chartType : ChartType = ChartType.ColumnChart;
   chartOptions: any = {
-    title: 'Rendimiento por Curso (excl. disciplina)',
+    title: 'Rendimiento por Curso',
     hAxis: {
       title: 'Curso'
     },

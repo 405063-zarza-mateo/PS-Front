@@ -354,14 +354,17 @@ export class StudentsListComponent implements OnInit, OnDestroy {
 
     return pages;
   }
-  formatCourseName(course: String): string {
-    if (!course) return '';
+formatCourseName(course: String): String {
+  if (!course) return '';
 
-    return course
-      .toLowerCase()
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  }
+  return course
+    .toLowerCase()
+    .split('_')
+    .map(word => {
+      const formatted = word.charAt(0).toUpperCase() + word.slice(1);
+      return formatted.replace(/^Anio$/i, 'Año'); // reemplaza "Anio" exacto (con o sin mayúscula)
+    })
+    .join(' ');
+}
 
 }

@@ -36,7 +36,7 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
   
   // Filtros principales
   selectedUserType: 'students' | 'teachers' = 'students';
-  selectedPerson: string = '';
+  selectedPersonId: string | number = ''; // Cambiado de selectedPerson a selectedPersonId
   selectedCourse: string = '';
   selectedSubject: string = '';
   
@@ -122,6 +122,56 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Nuevo método para obtener las personas filtradas para el select
+  getFilteredPersonsForSelect(): (Student | Teacher)[] {
+    if (this.selectedUserType === 'students') {
+      // Si hay un curso seleccionado, filtrar estudiantes por curso
+      if (this.selectedCourse) {
+        return this.students.filter(student => student.course === this.selectedCourse);
+      } else {
+        return this.students;
+      }
+    } else {
+      // Si hay un curso seleccionado, filtrar profesores por curso
+      if (this.selectedCourse) {
+        return this.teachers.filter(teacher => teacher.course === this.selectedCourse);
+      } else {
+        return this.teachers;
+      }
+    }
+  }
+
+  // Método para obtener el nombre de la persona seleccionada
+  getSelectedPersonName(): string {
+    if (!this.selectedPersonId) return '';
+    
+    const person = this.selectedUserType === 'students' 
+      ? this.students.find(s => s.id == this.selectedPersonId) // Usar == para comparación flexible
+      : this.teachers.find(t => t.id == this.selectedPersonId); // Usar == para comparación flexible
+      
+    return person ? `${person.name} ${person.lastName}` : '';
+  }
+
+  // Nuevo método para manejar el cambio de persona
+  onPersonFilterChange(): void {
+    this.applyFilters();
+    this.prepareAllChartData();
+  }
+
+  // Nuevo método para manejar el cambio de curso (que debe limpiar la selección de persona)
+  onCourseFilterChange(): void {
+    // Si cambia el curso, resetear la selección de persona porque puede que ya no esté disponible
+    const currentPersons = this.getFilteredPersonsForSelect();
+    const selectedPersonExists = currentPersons.find(p => p.id == this.selectedPersonId); // Usar == para comparación flexible
+    
+    if (!selectedPersonExists) {
+      this.selectedPersonId = '';
+    }
+    
+    this.applyFilters();
+    this.prepareAllChartData();
+  }
+
   onFilterChange(): void {
     this.applyFilters();
     this.prepareAllChartData();
@@ -133,9 +183,8 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
         let matchesPerson = true;
         let matchesCourse = true;
 
-        if (this.selectedPerson) {
-          matchesPerson = `${student.name} ${student.lastName}`.toLowerCase()
-            .includes(this.selectedPerson.toLowerCase());
+        if (this.selectedPersonId) {
+          matchesPerson = student.id == this.selectedPersonId; // Usar == para comparación flexible
         }
 
         if (this.selectedCourse) {
@@ -149,9 +198,8 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
         let matchesPerson = true;
         let matchesCourse = true;
 
-        if (this.selectedPerson) {
-          matchesPerson = `${teacher.name} ${teacher.lastName}`.toLowerCase()
-            .includes(this.selectedPerson.toLowerCase());
+        if (this.selectedPersonId) {
+          matchesPerson = teacher.id == this.selectedPersonId; // Usar == para comparación flexible
         }
 
         if (this.selectedCourse) {
@@ -164,7 +212,7 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
   }
 
   resetFilters(): void {
-    this.selectedPerson = '';
+    this.selectedPersonId = '';
     this.selectedCourse = '';
     this.selectedSubject = '';
     
@@ -184,108 +232,131 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
   }
 
   // Métodos para gráficos de rendimiento (solo estudiantes)
-  preparePerformanceData(): void {
-    this.performanceData = [];
-
-    if (this.selectedPerson && this.filteredStudents.length === 1) {
-      const student = this.filteredStudents[0];
-      if (student.reviews && student.reviews.length > 0) {
-        const latestReview = student.reviews[student.reviews.length - 1];
-
-        latestReview.results.forEach(result => {
-          if (result.workedOn && result.score !== null) {
-            this.performanceData.push([
-              result.subject,
-              result.score
-            ]);
-          }
-        });
-      }
-    } else {
+preparePerformanceData(): void {
+  this.performanceData = [];
+  
+  if (this.selectedPersonId && this.filteredStudents.length === 1) {
+    // Para un solo alumno, calculamos el promedio de todas sus reviews
+    const student = this.filteredStudents[0];
+    if (student.reviews && student.reviews.length > 0) {
       const subjectScores: { [key: string]: { total: number, count: number } } = {};
-
+      
+      // Inicializar contadores para todas las materias
       this.subjects.forEach(subject => {
         subjectScores[subject] = { total: 0, count: 0 };
       });
-
-      this.filteredStudents.forEach(student => {
-        if (student.reviews && student.reviews.length > 0) {
-          student.reviews.forEach(review => {
-            review.results.forEach(result => {
-              if (result.workedOn && result.score !== null ) {
-                subjectScores[result.subject].total += result.score;
-                subjectScores[result.subject].count += 1;
-              }
-            });
-          });
-        }
+      
+      // Procesar todas las reviews del alumno
+      student.reviews.forEach(review => {
+        review.results.forEach(result => {
+          if (result.workedOn && result.score !== null) {
+            subjectScores[result.subject].total += result.score;
+            subjectScores[result.subject].count += 1;
+          }
+        });
       });
-
+      
+      // Calcular promedios y agregar a performanceData
       Object.keys(subjectScores).forEach(subject => {
         const average = subjectScores[subject].count > 0
           ? subjectScores[subject].total / subjectScores[subject].count
           : 0;
-
         this.performanceData.push([
           subject,
           parseFloat(average.toFixed(2))
         ]);
       });
     }
-  }
-
-  prepareCourseComparisonData(): void {
-    this.courseComparisonData = [];
+  } else {
+    // Para múltiples alumnos, el código original funciona correctamente
+    const subjectScores: { [key: string]: { total: number, count: number } } = {};
     
-    const courseScores: { [key: string]: { [subject: string]: { total: number, count: number } } } = {};
-
-    this.courses.forEach(course => {
-      courseScores[course] = {};
-      this.subjects.forEach(subject => {
-        courseScores[course][subject] = { total: 0, count: 0 };
-      });
+    this.subjects.forEach(subject => {
+      subjectScores[subject] = { total: 0, count: 0 };
     });
-
-    const subjectsToProcess = this.selectedSubject ? [this.selectedSubject] : this.subjects;
-
-    this.students.forEach(student => {
+    
+    this.filteredStudents.forEach(student => {
       if (student.reviews && student.reviews.length > 0) {
         student.reviews.forEach(review => {
           review.results.forEach(result => {
-            if (subjectsToProcess.includes(result.subject) &&
-              result.workedOn &&
-              result.score !== null &&
-              courseScores[student.course] && result.subject != "Disciplina") {
-
-              courseScores[student.course][result.subject].total += result.score;
-              courseScores[student.course][result.subject].count += 1;
+            if (result.workedOn && result.score !== null) {
+              subjectScores[result.subject].total += result.score;
+              subjectScores[result.subject].count += 1;
             }
           });
         });
       }
     });
-
-    Object.keys(courseScores).forEach(course => {
-      let totalCourseScore = 0;
-      let totalCourseCount = 0;
-
-      subjectsToProcess.forEach(subject => {
-        if (courseScores[course][subject]) {
-          totalCourseScore += courseScores[course][subject].total;
-          totalCourseCount += courseScores[course][subject].count;
-        }
-      });
-
-      const average = totalCourseCount > 0
-        ? totalCourseScore / totalCourseCount
+    
+    Object.keys(subjectScores).forEach(subject => {
+      const average = subjectScores[subject].count > 0
+        ? subjectScores[subject].total / subjectScores[subject].count
         : 0;
-
-      this.courseComparisonData.push([
-        this.formatCourseName(course),
+      this.performanceData.push([
+        subject,
         parseFloat(average.toFixed(2))
       ]);
     });
   }
+}
+  prepareCourseComparisonData(): void {
+  this.courseComparisonData = [];
+ 
+  const courseScores: { [key: string]: { [subject: string]: { total: number, count: number } } } = {};
+  this.courses.forEach(course => {
+    courseScores[course] = {};
+    this.subjects.forEach(subject => {
+      courseScores[course][subject] = { total: 0, count: 0 };
+    });
+  });
+
+  // Determinar qué materias procesar
+  let subjectsToProcess: string[];
+  if (this.selectedSubject === "Disciplina") {
+    subjectsToProcess = ["Disciplina"];
+  } else if (this.selectedSubject) {
+    subjectsToProcess = [this.selectedSubject];
+  } else {
+    // Si no hay materia seleccionada, procesar todas excepto Disciplina
+    subjectsToProcess = this.subjects.filter(subject => subject !== "Disciplina");
+  }
+
+  this.students.forEach(student => {
+    if (student.reviews && student.reviews.length > 0) {
+      student.reviews.forEach(review => {
+        review.results.forEach(result => {
+          if (subjectsToProcess.includes(result.subject) &&
+            result.workedOn &&
+            result.score !== null &&
+            courseScores[student.course]) {
+            courseScores[student.course][result.subject].total += result.score;
+            courseScores[student.course][result.subject].count += 1;
+          }
+        });
+      });
+    }
+  });
+
+   Object.keys(courseScores).forEach(course => {
+    let totalCourseScore = 0;
+    let totalCourseCount = 0;
+    subjectsToProcess.forEach(subject => {
+      if (courseScores[course][subject]) {
+        totalCourseScore += courseScores[course][subject].total;
+        totalCourseCount += courseScores[course][subject].count;
+      }
+    });
+    
+    // Solo agregar cursos que tengan datos (totalCourseCount > 0)
+    if (totalCourseCount > 0) {
+      const average = totalCourseScore / totalCourseCount;
+      this.courseComparisonData.push([
+        this.formatCourseName(course),
+        parseFloat(average.toFixed(2))
+      ]);
+    }
+  });
+}
 
   prepareSubjectProgressData(): void {
     this.subjectProgressData = [];
@@ -355,17 +426,22 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
     console.log('Rango de fechas de rendimiento actualizado:', dateRange);
   }
 
+  
 
 
-  formatCourseName(course: string): string {
-    if (!course) return '';
+formatCourseName(course: string): string {
+  if (!course) return '';
 
-    return course
-      .toLowerCase()
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+  return course
+    .toLowerCase()
+    .split('_')
+    .map(word => {
+      const formatted = word.charAt(0).toUpperCase() + word.slice(1);
+      return formatted.replace(/^Anio$/i, 'Año'); // reemplaza "Anio" exacto (con o sin mayúscula)
+    })
+    .join(' ');
 }
+
 
 
 loadAssistanceData(): void {

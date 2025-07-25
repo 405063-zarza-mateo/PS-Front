@@ -132,6 +132,7 @@ export class StudentAttendanceChartComponent implements OnInit, OnChanges {
           italic: false
         },
         minValue: 0,
+        
         textStyle: {
           fontSize: 10
         }

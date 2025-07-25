@@ -11,8 +11,13 @@
             <label for="personFilter" class="form-label">
               {{ selectedUserType === 'students' ? 'Alumno' : 'Profesor' }}
             </label>
-            <input type="text" class="form-control" id="personFilter" [(ngModel)]="selectedPerson"
-              (ngModelChange)="onFilterChange()" [placeholder]="'Buscar por nombre...'">
+            <select class="form-select" id="personFilter" [(ngModel)]="selectedPersonId"
+              (ngModelChange)="onPersonFilterChange()">
+              <option value="">{{ selectedUserType === 'students' ? 'Todos los alumnos' : 'Todos los profesores' }}</option>
+              @for (person of getFilteredPersonsForSelect(); track person.id) {
+                <option [value]="person.id">{{ person.name }} {{ person.lastName }}</option>
+              }
+            </select>
           </div>
         </div>
 
@@ -20,7 +25,7 @@
           <div class="form-group">
             <label for="courseFilter" class="form-label">Curso</label>
             <select class="form-select" id="courseFilter" [(ngModel)]="selectedCourse"
-              (ngModelChange)="onFilterChange()">
+              (ngModelChange)="onCourseFilterChange()">
               <option value="">Todos los cursos</option>
               @for (course of courses; track course) {
               <option [value]="course">{{ formatCourseName(course) }}</option>
@@ -77,7 +82,7 @@
       <div class="card shadow-sm h-100">
         <div class="card-body">
           <h5 class="card-title">
-            {{ selectedPerson ? 'Rendimiento del Alumno por Asignatura' : 'Rendimiento Promedio por Asignatura' }}
+            {{ getSelectedPersonName() ? 'Rendimiento de ' + getSelectedPersonName() + ' por Asignatura' : 'Rendimiento Promedio por Asignatura' }}
           </h5>
           <app-student-performance-chart [chartData]="performanceData"></app-student-performance-chart>
         </div>
