@@ -12,7 +12,7 @@ import { AssistanceDto } from '../models/assistanceDto';
   providedIn: 'root'
 })
 export class TeacherService {
-  private apiUrl = `${environment.apiUrl}/teacher`;
+  private apiUrlUsers = `${environment.apiUrlUsers}/teacher`;
 
   currentUser: any;
   teacherEmail: string = '';
@@ -44,7 +44,7 @@ export class TeacherService {
 
 
   getTeacherById(id: number): Observable<Teacher> {
-    return this.http.get<Teacher>(`${this.apiUrl}/${id}`)
+    return this.http.get<Teacher>(`${this.apiUrlUsers}/${id}`)
       .pipe(
         catchError(error => {
           console.error(`Error fetching teacher with id ${id}:`, error);
@@ -57,7 +57,7 @@ export class TeacherService {
   updateTeacher(id: number, teacher: Partial<Teacher>): Observable<Teacher> {
     const params = new HttpParams().set('teacherEmail', this.teacherEmail);
 
-    return this.http.put<Teacher>(`${this.apiUrl}/${id}`, teacher, { params })
+    return this.http.put<Teacher>(`${this.apiUrlUsers}/${id}`, teacher, { params })
       .pipe(
         catchError(error => {
           console.error(`Error updating teacher with id ${id}:`, error);
@@ -68,7 +68,7 @@ export class TeacherService {
 
   deleteTeacher(id: number): Observable<any> {
 
-    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' })
+    return this.http.delete(`${this.apiUrlUsers}/${id}`, { responseType: 'text' })
       .pipe(
         catchError(error => {
           console.error(`Error deleting teacher with id ${id}:`, error);
@@ -78,7 +78,7 @@ export class TeacherService {
   }
 
   getTeacherReviews(id: number): Observable<TeacherReviewDto[]> {
-    return this.http.get<TeacherReviewDto[]>(`${this.apiUrl}/reviews/${id}`)
+    return this.http.get<TeacherReviewDto[]>(`${this.apiUrlUsers}/reviews/${id}`)
       .pipe(
         catchError(error => {
           console.error(`Error fetching teacher with id ${id}:`, error);
@@ -88,6 +88,6 @@ export class TeacherService {
   }
 
    getStudentAssistances(): Observable<AssistanceDto[]> {
-  return this.http.get<AssistanceDto[]>(`${this.apiUrl}/assistances`);
+  return this.http.get<AssistanceDto[]>(`${this.apiUrlUsers}/assistances`);
 }
 }

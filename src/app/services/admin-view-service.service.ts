@@ -16,8 +16,8 @@ import { TeacherResponse } from '../models/teacherRequest';
 })
 export class AdminViewService {
 
- private apiUrl = `${environment.apiUrl}/admin`;
-  private apiUrl2 = `${environment.apiUrl}/teacher`;
+ private apiUrlUsers = `${environment.apiUrlUsers}/admin`;
+  private apiUrlUsersNews = `${environment.apiUrlUsers}/teacher`;
 
   currentUser: any;
   teacherEmail: string = '';
@@ -49,7 +49,7 @@ export class AdminViewService {
 
   getTeachers(): Observable<Teacher[]> {
 
-    return this.http.get<Teacher[]>(`${this.apiUrl2}/all`)
+    return this.http.get<Teacher[]>(`${this.apiUrlUsersNews}/all`)
       .pipe(
         catchError(error => {
           console.error('Error fetching teachers:', error);
@@ -61,7 +61,7 @@ export class AdminViewService {
   getPendingTeachers(): Observable<Teacher[]> {
     const params = new HttpParams().set('approved', false);
 
-    return this.http.get<Teacher[]>(`${this.apiUrl}/pending-teachers`, { params })
+    return this.http.get<Teacher[]>(`${this.apiUrlUsers}/pending-teachers`, { params })
       .pipe(
         catchError(error => {
           console.error('Error fetching teachers:', error);
@@ -73,7 +73,7 @@ export class AdminViewService {
   approveTeacher(id : number): Observable<Teacher[]> {
     const params = new HttpParams().set('approved', true);
 
-    return this.http.put<Teacher[]>(`${this.apiUrl}/approve-teacher/${id}`, { params })
+    return this.http.put<Teacher[]>(`${this.apiUrlUsers}/approve-teacher/${id}`, { params })
       .pipe(
         catchError(error => {
           console.error('Error fetching teachers:', error);
@@ -85,7 +85,7 @@ export class AdminViewService {
   denyTeacher(id : number): Observable<any> {
     const params = new HttpParams().set('approved', true);
 
-    return this.http.delete(`${this.apiUrl}/reject-teacher/${id}`, { responseType:'text' })
+    return this.http.delete(`${this.apiUrlUsers}/reject-teacher/${id}`, { responseType:'text' })
       .pipe(
         catchError(error => {
           console.error(`Error rejecting teacher with id ${id}:`, error);
@@ -95,7 +95,7 @@ export class AdminViewService {
   }
 
   respondRequests(list : TeacherResponse[]) : Observable<any>{
-        return this.http.post<Student>(`${this.apiUrl}/respond-request`,  list )
+        return this.http.post<Student>(`${this.apiUrlUsers}/respond-request`,  list )
       .pipe(
         catchError(error => {
           console.error('Error sending invites:', error);
@@ -106,6 +106,6 @@ export class AdminViewService {
   }
   
     getLogs(): Observable<Log[]> {
-      return this.http.get<Log[]>(`${this.apiUrl}/logs`);
+      return this.http.get<Log[]>(`${this.apiUrlUsers}/logs`);
     }
   }

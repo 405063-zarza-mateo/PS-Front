@@ -11,7 +11,7 @@ import { ItemPostDto } from '../models/itemPostDto';
 })
 export class InventoryService {
 
-  private apiUrl = `${environment.apiUrlInv}/inventory`;
+  private apiUrlUsers = `${environment.apiUrlUsersInv}/inventory`;
 
   currentUser: any;
   itemEmail: string = '';
@@ -25,7 +25,7 @@ export class InventoryService {
 
   createItem(item: ItemPostDto): Observable<ItemPostDto> {
 
-    return this.http.post<Item>(`${this.apiUrl}/create`, item)
+    return this.http.post<Item>(`${this.apiUrlUsers}/create`, item)
       .pipe(
         catchError(error => {
           console.error('Error creating item:', error);
@@ -36,7 +36,7 @@ export class InventoryService {
 
   getItems(): Observable<Item[]> {
 
-    return this.http.get<Item[]>(`${this.apiUrl}/all`)
+    return this.http.get<Item[]>(`${this.apiUrlUsers}/all`)
       .pipe(
         catchError(error => {
           console.error('Error fetching items:', error);
@@ -46,7 +46,7 @@ export class InventoryService {
   }
 
   getItemById(id: number): Observable<Item> {
-    return this.http.get<Item>(`${this.apiUrl}/${id}`)
+    return this.http.get<Item>(`${this.apiUrlUsers}/${id}`)
       .pipe(
         catchError(error => {
           console.error(`Error fetching item with id ${id}:`, error);
@@ -58,7 +58,7 @@ export class InventoryService {
 
   updateItem(id: number, item: Partial<Item>): Observable<Item> {
 
-    return this.http.put<Item>(`${this.apiUrl}/${id}`, item)
+    return this.http.put<Item>(`${this.apiUrlUsers}/${id}`, item)
       .pipe(
         catchError(error => {
           console.error(`Error updating item with id ${id}:`, error);
@@ -69,7 +69,7 @@ export class InventoryService {
 
   deleteItem(id: number): Observable<any> {
 
-    return this.http.delete(`${this.apiUrl}/delete/${id}`, { responseType: 'text' })
+    return this.http.delete(`${this.apiUrlUsers}/delete/${id}`, { responseType: 'text' })
       .pipe(
         catchError(error => {
           console.error(`Error deleting item with id ${id}:`, error);

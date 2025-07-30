@@ -54,7 +54,7 @@ export interface ErrorResponse {
   providedIn: 'root'
 })
 export class MercadoPagoService {
-  private apiUrl = `${environment.apiUrlMp}/donation`;
+  private apiUrlUsers = `${environment.apiUrlUsersMp}/donation`;
 
   constructor(private http: HttpClient) { }
 
@@ -66,8 +66,8 @@ export class MercadoPagoService {
       'Content-Type': 'application/json'
     });
     
-    console.log(`Enviando solicitud de donación a ${this.apiUrl}`);
-    return this.http.post<DonationResponse>(this.apiUrl, request, { headers });
+    console.log(`Enviando solicitud de donación a ${this.apiUrlUsers}`);
+    return this.http.post<DonationResponse>(this.apiUrlUsers, request, { headers });
   }
 
   /**
@@ -79,7 +79,7 @@ export class MercadoPagoService {
     });
 
     console.log(`Consultando estado del pago: ${paymentId}`);
-    return this.http.get<PaymentStatusDto>(`${this.apiUrl}/status/${paymentId}`, { headers });
+    return this.http.get<PaymentStatusDto>(`${this.apiUrlUsers}/status/${paymentId}`, { headers });
   }
 
   /**
@@ -87,7 +87,7 @@ export class MercadoPagoService {
    */
   healthCheck(): Observable<{ status: string; service: string; timestamp: string }> {
     return this.http.get<{ status: string; service: string; timestamp: string }>(
-      `${this.apiUrl}/health`
+      `${this.apiUrlUsers}/health`
     );
   }
 

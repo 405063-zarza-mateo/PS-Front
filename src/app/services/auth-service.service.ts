@@ -19,7 +19,7 @@ export class AuthService {
   readonly isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   readonly userRole$ = this.userRoleSubject.asObservable();
 
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrlUsers = `${environment.apiUrlUsers}/auth`;
   private isBrowser: boolean;
 
   constructor(
@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/login`, { email, password })
+    return this.http.post<User>(`${this.apiUrlUsers}/login`, { email, password })
       .pipe(
         tap(user => {
           if (this.isBrowser) {
@@ -67,7 +67,7 @@ export class AuthService {
   }
 
   register(userData: any): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/signup`, userData)
+    return this.http.post<User>(`${this.apiUrlUsers}/signup`, userData)
       .pipe(
         tap(user => {
           this.router.navigate(['/register/waiting']);
@@ -83,7 +83,7 @@ export class AuthService {
     const params = new HttpParams().set('email', email);
 
 
-    return this.http.post<any>(`${this.apiUrl}/reset-password`, null, { params })
+    return this.http.post<any>(`${this.apiUrlUsers}/reset-password`, null, { params })
       .pipe(
         catchError(error => {
           console.error('Reset password error:', error);
@@ -125,7 +125,7 @@ export class AuthService {
       return throwError(() => new Error('No authenticated user'));
     }
 
-    return this.http.post<User>(`${this.apiUrl}/refresh-token`, {
+    return this.http.post<User>(`${this.apiUrlUsers}/refresh-token`, {
       refreshToken: this.currentUser.token
     }).pipe(
       tap(user => {

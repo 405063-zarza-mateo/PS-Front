@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Student } from '../../../models/student';
-
 import { StudentService } from '../../../services/student-service.service';
 import { StudentPostDto } from '../../../models/studentPostDto';
 import { Subscription } from 'rxjs';
@@ -29,7 +28,6 @@ export class CreateStudentComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-
   constructor(
     private fb: FormBuilder,
     private studentService: StudentService
@@ -37,11 +35,9 @@ export class CreateStudentComponent implements OnInit, OnDestroy {
     this.studentForm = this.createForm();
   }
 
-
   ngOnInit(): void {
     this.loadCourses()
   }
-
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
@@ -62,6 +58,41 @@ export class CreateStudentComponent implements OnInit, OnDestroy {
     return this.studentForm.controls;
   }
 
+  /**
+   * Capitaliza la primera letra de cada palabra
+   */
+  private capitalizeWords(text: string): string {
+    if (!text) return '';
+    
+    return text
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  /**
+   * Capitaliza el nombre cuando el usuario sale del campo
+   */
+  onNameBlur(): void {
+    const nameControl = this.studentForm.get('name');
+    if (nameControl?.value) {
+      const capitalizedName = this.capitalizeWords(nameControl.value.trim());
+      nameControl.setValue(capitalizedName);
+    }
+  }
+
+  /**
+   * Capitaliza el apellido cuando el usuario sale del campo
+   */
+  onLastNameBlur(): void {
+    const lastNameControl = this.studentForm.get('lastName');
+    if (lastNameControl?.value) {
+      const capitalizedLastName = this.capitalizeWords(lastNameControl.value.trim());
+      lastNameControl.setValue(capitalizedLastName);
+    }
+  }
+
   onClose(): void {
     this.close.emit();
   }
@@ -73,8 +104,17 @@ export class CreateStudentComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const newStudent: StudentPostDto = this.studentForm.value
+    const formData = { ...this.studentForm.value };
+    
+    // Capitalizar nombre y apellido antes de enviar
+    if (formData.name) {
+      formData.name = this.capitalizeWords(formData.name.trim());
+    }
+    if (formData.lastName) {
+      formData.lastName = this.capitalizeWords(formData.lastName.trim());
+    }
 
+    const newStudent: StudentPostDto = formData;
 
     this.saving = true;
     this.errorMessage = '';
@@ -83,10 +123,7 @@ export class CreateStudentComponent implements OnInit, OnDestroy {
       next: (result) => {
         this.saving = false;
         this.created.emit();
-
         this.close.emit();
-
-        // Actualizar la información del estudiante en la interfaz
       },
       error: (error) => {
         this.saving = false;
@@ -96,7 +133,6 @@ export class CreateStudentComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.push(subscription);
-
   }
 
   cancel(): void {
@@ -104,17 +140,15 @@ export class CreateStudentComponent implements OnInit, OnDestroy {
   }
 
   loadCourses() {
-
     const subscription = this.studentService.getCourses().subscribe({
       next: (data) => {
         this.courses = data;
       },
       error: (err) => {
-        console.error('Error al cargar los alumnos:', err);
+        console.error('Error al cargar los cursos:', err);
       }
     });
 
     this.subscriptions.push(subscription);
   }
-
 }

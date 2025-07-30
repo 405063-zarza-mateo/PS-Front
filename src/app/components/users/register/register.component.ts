@@ -40,12 +40,55 @@ export class RegisterComponent {
     return password === confirmPassword ? null : { 'mismatch': true };
   }
 
+  /**
+   * Capitaliza la primera letra de cada palabra
+   */
+  private capitalizeWords(text: string): string {
+    if (!text) return '';
+    
+    return text
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  /**
+   * Capitaliza el nombre cuando el usuario sale del campo
+   */
+  onNameBlur(): void {
+    const nameControl = this.registerForm.get('name');
+    if (nameControl?.value) {
+      const capitalizedName = this.capitalizeWords(nameControl.value.trim());
+      nameControl.setValue(capitalizedName);
+    }
+  }
+
+  /**
+   * Capitaliza el apellido cuando el usuario sale del campo
+   */
+  onLastNameBlur(): void {
+    const lastNameControl = this.registerForm.get('lastName');
+    if (lastNameControl?.value) {
+      const capitalizedLastName = this.capitalizeWords(lastNameControl.value.trim());
+      lastNameControl.setValue(capitalizedLastName);
+    }
+  }
+
   onSubmit(): void {
     if (this.registerForm.valid) {
       this.isSubmitting = true;
       
       // Extraer los datos del formulario, excluyendo confirmPassword y termsAccepted
-      const { confirmPassword,  ...userData } = this.registerForm.value;
+      const { confirmPassword, ...userData } = this.registerForm.value;
+      
+      // Capitalizar nombre y apellido antes de enviar
+      if (userData.name) {
+        userData.name = this.capitalizeWords(userData.name.trim());
+      }
+      if (userData.lastName) {
+        userData.lastName = this.capitalizeWords(userData.lastName.trim());
+      }
       
       this.authService.register(userData).subscribe({
         next: () => {

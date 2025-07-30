@@ -8,34 +8,34 @@ import { News } from '../models/news';
   providedIn: 'root'
 })
 export class NewsService {
-  private apiUrl = `${environment.apiUrl2}/news`;
+  private apiUrlUsers = `${environment.apiUrlUsersNews}/news`;
 
   constructor(private http: HttpClient) { }
 
   getAllNews(): Observable<News[]> {
-    return this.http.get<News[]>(this.apiUrl);
+    return this.http.get<News[]>(this.apiUrlUsers);
   }
 
   getNewsById(id: number): Observable<News> {
-    return this.http.get<News>(`${this.apiUrl}/${id}`);
+    return this.http.get<News>(`${this.apiUrlUsers}/${id}`);
   }
 
   createNews(formData: FormData): Observable<News> {
-    return this.http.post<News>(this.apiUrl, formData);
+    return this.http.post<News>(this.apiUrlUsers, formData);
   }
 
   // Method to update news with image (uses the correct endpoint)
   updateNewsWithImage(id: number, formData: FormData): Observable<News> {
-    return this.http.put<News>(`${this.apiUrl}/${id}/with-image`, formData);
+    return this.http.put<News>(`${this.apiUrlUsers}/${id}/with-image`, formData);
   }
 
   // Method to update news without image (JSON format)
   updateNewsWithoutImage(id: number, news: { title: string, body: string }): Observable<News> {
-    return this.http.put<News>(`${this.apiUrl}/${id}`, news);
+    return this.http.put<News>(`${this.apiUrlUsers}/${id}`, news);
   }
 
   deleteNews(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrlUsers}/${id}`);
   }
 
   // Helper to prepare the FormData that the backend needs

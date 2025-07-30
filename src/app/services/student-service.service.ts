@@ -14,7 +14,7 @@ import { AssistanceDto } from '../models/assistanceDto';
   providedIn: 'root'
 })
 export class StudentService {
-  private apiUrl = `${environment.apiUrl}/student`;
+  private apiUrlUsers = `${environment.apiUrlUsers}/student`;
   currentUser: any;
   teacherEmail: string = '';
   private isBrowser: boolean;
@@ -44,7 +44,7 @@ export class StudentService {
   }
 
   getStudents(): Observable<Student[]> {
-    return this.http.get<Student[]>(`${this.apiUrl}/all`)
+    return this.http.get<Student[]>(`${this.apiUrlUsers}/all`)
       .pipe(
         catchError(error => {
           console.error('Error fetching students:', error);
@@ -54,7 +54,7 @@ export class StudentService {
   }
 
   getStudentById(id: number): Observable<Student> {
-    return this.http.get<Student>(`${this.apiUrl}/${id}`)
+    return this.http.get<Student>(`${this.apiUrlUsers}/${id}`)
       .pipe(
         catchError(error => {
           console.error(`Error fetching student with id ${id}:`, error);
@@ -66,7 +66,7 @@ export class StudentService {
   createStudent(student: StudentPostDto): Observable<StudentPostDto> {
     const params = new HttpParams().set('teacherEmail', this.teacherEmail);
 
-    return this.http.post<Student>(`${this.apiUrl}/create`, student, { params })
+    return this.http.post<Student>(`${this.apiUrlUsers}/create`, student, { params })
       .pipe(
         catchError(error => {
           console.error('Error creating student:', error);
@@ -78,7 +78,7 @@ export class StudentService {
   updateStudent(id: number, student: Partial<Student>): Observable<Student> {
     const params = new HttpParams().set('teacherEmail', this.teacherEmail);
 
-    return this.http.put<Student>(`${this.apiUrl}/${id}`, student, { params })
+    return this.http.put<Student>(`${this.apiUrlUsers}/${id}`, student, { params })
       .pipe(
         catchError(error => {
           console.error(`Error updating student with id ${id}:`, error);
@@ -89,7 +89,7 @@ export class StudentService {
 
   deleteStudent(id: number): Observable<any> {
 
-    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' })
+    return this.http.delete(`${this.apiUrlUsers}/${id}`, { responseType: 'text' })
       .pipe(
         catchError(error => {
           console.error(`Error deleting student with id ${id}:`, error);
@@ -99,7 +99,7 @@ export class StudentService {
   }
 
   getCourses(): Observable<String[]> {
-    return this.http.get<String[]>(`${this.apiUrl}/courses`)
+    return this.http.get<String[]>(`${this.apiUrlUsers}/courses`)
       .pipe(
         catchError(error => {
           console.error('Error fetching courses:', error);
@@ -112,7 +112,7 @@ export class StudentService {
   addReview(review: ReviewDto, id: number): Observable<Review> {
     const params = new HttpParams().set('studentId', id).set('teacherEmail', this.teacherEmail);
 
-    return this.http.post<Review>(`${this.apiUrl}/addReview`, review, { params })
+    return this.http.post<Review>(`${this.apiUrlUsers}/addReview`, review, { params })
       .pipe(
         catchError(error => {
           console.error('Error creating review:', error);
@@ -122,6 +122,6 @@ export class StudentService {
   }
 
   getStudentAssistances(): Observable<AssistanceDto[]> {
-  return this.http.get<AssistanceDto[]>(`${this.apiUrl}/assistances`);
+  return this.http.get<AssistanceDto[]>(`${this.apiUrlUsers}/assistances`);
 }
 }

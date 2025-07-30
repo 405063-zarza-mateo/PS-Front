@@ -19,12 +19,17 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="firstName" class="form-label">Nombre</label>
-                <input type="text" formControlName="name" class="form-control" id="namr" placeholder="Tu nombre"
-                  [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
+                <input type="text" 
+                       formControlName="name" 
+                       class="form-control" 
+                       id="name" 
+                       placeholder="Tu nombre"
+                       (blur)="onNameBlur()"
+                       [class.is-invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
                 <div class="invalid-feedback">
-                  @if (registerForm.get('firstName')?.hasError('required')) {
+                  @if (registerForm.get('name')?.hasError('required')) {
                   El nombre es obligatorio
-                  } @else if (registerForm.get('firstName')?.hasError('minlength')) {
+                  } @else if (registerForm.get('name')?.hasError('minlength')) {
                   El nombre debe tener al menos 2 caracteres
                   }
                 </div>
@@ -32,9 +37,13 @@
 
               <div class="col-md-6 mb-3">
                 <label for="lastName" class="form-label">Apellido</label>
-                <input type="text" formControlName="lastName" class="form-control" id="lastName"
-                  placeholder="Tu apellido"
-                  [class.is-invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
+                <input type="text" 
+                       formControlName="lastName" 
+                       class="form-control" 
+                       id="lastName"
+                       placeholder="Tu apellido"
+                       (blur)="onLastNameBlur()"
+                       [class.is-invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
                 <div class="invalid-feedback">
                   @if (registerForm.get('lastName')?.hasError('required')) {
                   El apellido es obligatorio
@@ -61,7 +70,6 @@
               </div>
 
               <div class=" col-md-6 mb-3">
-
                 <select class="form-select py-1" formControlName="course" id="course" style="height: 5vh;">
                   <option selected>Curso</option>
                   <option value="Tercer_anio">Tercer año </option>
@@ -69,12 +77,10 @@
                   <option value="Quinto_anio">Quinto año </option>
                   <option value="Sexto_anio">Sexto año </option>
                   <option value="Universidad">Universidad </option>
-
-
                 </select>
               </div>
-
             </div>
+            
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="password" class="form-label">Contraseña</label>
@@ -104,10 +110,6 @@
                 </div>
               </div>
             </div>
-
-
-
-
 
             <div class="mb-4">
               <div class="form-check">

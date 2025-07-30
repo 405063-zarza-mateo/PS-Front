@@ -14,13 +14,17 @@
                 </div>
                 }
 
-
                 <form [formGroup]="studentForm" (ngSubmit)="saveChanges()">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label">Nombre</label>
-                            <input type="text" formControlName="name" class="form-control" id="name"
-                                placeholder="Nombre del alumno" [class.is-invalid]="submitted && f['name'].invalid">
+                            <input type="text" 
+                                   formControlName="name" 
+                                   class="form-control" 
+                                   id="name"
+                                   placeholder="Nombre del alumno" 
+                                   (blur)="onNameBlur()"
+                                   [class.is-invalid]="submitted && f['name'].invalid">
                             <div class="invalid-feedback">
                                 @if (f['name'].errors?.['required']) {
                                 El nombre es obligatorio
@@ -30,9 +34,13 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="lastName" class="form-label">Apellido</label>
-                            <input type="text" formControlName="lastName" class="form-control" id="lastName"
-                                placeholder="Apellido del alumno"
-                                [class.is-invalid]="submitted && f['lastName'].invalid">
+                            <input type="text" 
+                                   formControlName="lastName" 
+                                   class="form-control" 
+                                   id="lastName"
+                                   placeholder="Apellido del alumno"
+                                   (blur)="onLastNameBlur()"
+                                   [class.is-invalid]="submitted && f['lastName'].invalid">
                             <div class="invalid-feedback">
                                 @if (f['lastName'].errors?.['required']) {
                                 El apellido es obligatorio
@@ -56,12 +64,8 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="course" class="form-label">Curso</label>
-
-
-
                             <select class="form-select" id="course" formControlName="course"
                                 [class.is-invalid]="submitted && f['course'].invalid" >
-
                                 <option value="Curso" selected>Curso</option>
                                 @for (course of courses; track $index) {
                                 @if (course.includes("_") && course.includes("grado")) {
@@ -77,8 +81,6 @@
                                 }
                                 }
                             </select>
-
-
                             <div class="invalid-feedback">
                                 @if (f['course'].errors?.['required']) {
                                 El grado es obligatorio
@@ -94,7 +96,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="address" class="form-label">Información familiar (Opcional)</label>
+                        <label for="familyInfo" class="form-label">Información familiar (Opcional)</label>
                         <input type="text" formControlName="familyInfo" class="form-control" id="familyInfo"
                             placeholder="Información complementaria">
                     </div>

@@ -12,18 +12,18 @@ interface PasswordChangeData {
   providedIn: 'root'
 })
 export class ProfileService {
-  private apiUrl = environment.apiUrl;
+  private apiUrlUsers = environment.apiUrlUsers;
 
   constructor(private http: HttpClient) {}
 
   getUserProfile(): Observable<ProfileDto> {
-    return this.http.get<ProfileDto>(`${this.apiUrl}/teacher/profile`);
+    return this.http.get<ProfileDto>(`${this.apiUrlUsers}/teacher/profile`);
   }
 
   updateProfile(course: string): Observable<ProfileDto> {
-    return this.http.put<ProfileDto>(`${this.apiUrl}/teacher/profile`, { curso: course });
+    return this.http.put<ProfileDto>(`${this.apiUrlUsers}/teacher/profile`, { curso: course });
   }
 
    changePassword(data: PasswordChangeData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/change-password`, data);
+    return this.http.post(`${this.apiUrlUsers}/auth/change-password`, data);
   }}
